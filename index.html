@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cross-Cultural Collaboration</title>
+<meta name="description" content="A self-paced, two-track programme on cross-cultural collaboration between US, Philippines, India and Sri Lanka teams.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌏</text></svg>">
+<!-- Cache-busting: bump ?v=N on EVERY css/js edit. See README. -->
+<link rel="stylesheet" href="css/styles.css?v=2">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brandmark" href="#/" aria-label="Course home">
+      <svg width="30" height="30" viewBox="0 0 40 40" aria-hidden="true">
+        <circle cx="16" cy="20" r="11" fill="none" stroke="var(--accent)" stroke-width="2.6"/>
+        <circle cx="25" cy="20" r="11" fill="none" stroke="var(--amber)" stroke-width="2.6"/>
+      </svg>
+      <span style="display:block">
+        <b>Cross-Cultural Collaboration</b>
+        <span>Self-paced programme</span>
+      </span>
+    </a>
+    <div class="topbar-sp"></div>
+    <button class="tbtn" id="backhome" style="display:none">Switch track</button>
+    <button class="tbtn icon" id="themebtn" aria-label="Toggle light and dark theme" title="Toggle theme">◐</button>
+  </div>
+  <div class="progressbar"><i id="pbar"></i></div>
+</header>
+
+<main class="wrap">
+  <section id="home"   class="screen on"></section>
+  <section id="track"  class="screen"></section>
+  <section id="module" class="screen"></section>
+  <section id="check"  class="screen"></section>
+  <section id="cert"   class="screen"></section>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="js/track-us.js?v=2"></script>
+<script src="js/track-offshore.js?v=2"></script>
+<script src="js/store.js?v=2"></script>
+<script src="js/activities.js?v=2"></script>
+<script src="js/certificate.js?v=2"></script>
+<script src="js/app.js?v=2"></script>
+</body>
+</html>
