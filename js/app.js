@@ -452,45 +452,158 @@ const App = (() => {
   function renderHome(){
     const host = $('#home'); host.textContent = '';
     const c = el('div','homewrap'); host.appendChild(c);
+    const prof = Store.profile();
+
+    /* ---- hero ---- */
     const hero = el('div','hero');
     hero.appendChild(el('div','eyebrow','Self-paced programme'));
     hero.appendChild(el('h1', null, esc(COURSE.title)));
     hero.appendChild(el('p','sub', esc(COURSE.subtitle)));
-    hero.appendChild(el('div','regions','Philippines · India · Sri Lanka · United States'));
     c.appendChild(hero);
 
-    const nb = el('div','namebox');
-    nb.appendChild(el('label', null, 'Your name (for your certificate)'));
-    const inp = el('input'); inp.type = 'text'; inp.placeholder = 'e.g. Alex Morgan';
-    inp.value = Store.name(); inp.id = 'learnername';
-    inp.addEventListener('input', () => { Store.setName(inp.value); syncHeader(); });
-    nb.appendChild(inp);
-    nb.appendChild(el('p','hint','Stored only in this browser. Nothing is sent anywhere.'));
-    c.appendChild(nb);
-
-    c.appendChild(el('div','seclabel','Choose your track'));
-    const g = el('div','trackgrid');
-    COURSE.tracks.forEach(t => {
-      const p = trackProgress(t);
-      const card = el('button', 'trackcard ' + t.id);
-      card.appendChild(el('div','tk', esc(t.audience)));
-      card.appendChild(el('h3', null, esc(t.name)));
-      card.appendChild(el('p', null, esc(t.subtitle)));
-      const meta = el('div','meta');
-      const mins = t.modules.reduce((s,m) => s + (m.minutes||0), 0);
-      meta.appendChild(el('span', null, `${t.modules.length} modules`));
-      meta.appendChild(el('span', null, `~${mins} min`));
-      meta.appendChild(el('span', null, `${t.knowledgeCheck.length}-question check`));
-      card.appendChild(meta);
-      const pr = el('div','tprog'); pr.appendChild(el('i'));
-      pr.firstChild.style.width = p.pct + '%';
-      card.appendChild(pr);
-      card.appendChild(el('div','go', p.pct > 0 ? `Continue — ${p.pct}% complete →` : 'Start →'));
-      card.addEventListener('click', () => { location.hash = `#/${t.id}`; });
-      g.appendChild(card);
+    /* ---- high-level overview ---- */
+    const ov = el('div','panel overview');
+    ov.appendChild(el('span','eyebrow ovlabel','About this programme'));
+    const grid = el('div','ovgrid');
+    [
+      ['What it is',
+       'A self-paced course on working well across cultures in a revenue-cycle delivery setting. It covers the same ground as the facilitated workshop, restructured so you can work through it alone, at your own pace, and come back to it.'],
+      ['Why it exists',
+       'Most cross-cultural friction at work is not a performance problem. It is two groups running different but internally coherent assumptions about how to disagree, how to escalate, how to recognise good work, and what silence means. This builds the translation layer between them.'],
+      ['How it works',
+       'Tell us where you are based and which teams you work with, and the programme points you at the track that covers your counterparts. Neither direction is the default — a leader in Colombo taking on a US account needs this as much as one in Chicago taking on a Manila account.'],
+      ['What you will do',
+       'Short readings interleaved with drag-and-drop sorting, matching, sequencing, flip cards, and branching simulations where you choose a response and see what it signals. Every exercise ends with the coaching point behind it.'],
+      ['What you get',
+       'A short check after each module, one graded knowledge check, a downloadable certificate, and a PDF compiling every reflection you write.'],
+      ['Your progress',
+       'Everything saves automatically in this browser as you work — including part-finished exercises. Nothing is sent anywhere, and you can stop and resume at any point.']
+    ].forEach(([t,d]) => {
+      const cell = el('div','ovcell');
+      cell.appendChild(el('b', null, t));
+      cell.appendChild(el('p', null, d));
+      grid.appendChild(cell);
     });
-    c.appendChild(g);
+    ov.appendChild(grid);
+
+    const mods = COURSE.tracks.reduce((a,t) => a + t.modules.length, 0);
+    const mins = COURSE.tracks.reduce((a,t) => a + t.modules.reduce((x,m)=>x+(m.minutes||0),0), 0);
+    const st = el('div','ovstats');
+    [[String(COURSE.tracks.length),'Tracks'], [String(mods),'Modules'],
+     [Math.round(mins/60*10)/10 + ' hrs','If you take both'],
+     ['4','Cultures covered']].forEach(([v,l]) => {
+      const b = el('div','ovstat');
+      b.appendChild(el('b', null, v));
+      b.appendChild(el('span', null, l));
+      st.appendChild(b);
+    });
+    ov.appendChild(st);
+    c.appendChild(ov);
+
+    /* ---- learner context ---- */
+    const pf = el('div','panel profilecard');
+    pf.appendChild(el('span','eyebrow ovlabel','Set your context'));
+    pf.appendChild(el('p','pfintro',
+      'This only decides what we recommend. You can take either track, or both, whatever you choose here.'));
+
+    const f1 = el('div','field');
+    f1.appendChild(el('label','flabel','Your name — for your certificate'));
+    const inp = el('input'); inp.type='text'; inp.id='learnername';
+    inp.placeholder = 'e.g. Alex Morgan'; inp.value = Store.name();
+    inp.addEventListener('input', () => { Store.setName(inp.value); syncHeader(); });
+    f1.appendChild(inp); pf.appendChild(f1);
+
+    const f2 = el('div','field');
+    f2.appendChild(el('label','flabel','Where are you based?'));
+    const sel = el('select');
+    sel.appendChild(new Option('Select a location…',''));
+    COURSE.places.forEach(pl => {
+      const o = new Option(pl.name, pl.id);
+      if(prof.base === pl.id) o.selected = true;
+      sel.appendChild(o);
+    });
+    sel.addEventListener('change', () => {
+      const p2 = Store.profile(); p2.base = sel.value; Store.setProfile(p2); paintRec();
+    });
+    f2.appendChild(sel); pf.appendChild(f2);
+
+    const f3 = el('div','field');
+    f3.appendChild(el('label','flabel','Which teams do you work with most closely?'));
+    f3.appendChild(el('span','fhint','Choose as many as apply.'));
+    const chips = el('div','chipset');
+    COURSE.places.filter(pl => pl.id !== 'other').forEach(pl => {
+      const b = el('button', 'pchip' + (prof.works.includes(pl.id) ? ' on' : ''));
+      b.type = 'button'; b.textContent = pl.name;
+      b.addEventListener('click', () => {
+        const p2 = Store.profile();
+        p2.works = p2.works.includes(pl.id) ? p2.works.filter(x => x !== pl.id)
+                                            : [...p2.works, pl.id];
+        Store.setProfile(p2);
+        b.classList.toggle('on', p2.works.includes(pl.id));
+        paintRec();
+      });
+      chips.appendChild(b);
+    });
+    f3.appendChild(chips); pf.appendChild(f3);
+    c.appendChild(pf);
+
+    /* ---- recommended path ---- */
+    const recLabel = el('div','seclabel','Your path');
+    const grid2 = el('div','trackgrid');
+    c.appendChild(recLabel); c.appendChild(grid2);
+
+    function recommended(){
+      const w = Store.profile().works;
+      const ids = new Set();
+      COURSE.places.forEach(pl => { if(w.includes(pl.id) && pl.track) ids.add(pl.track); });
+      return ids;
+    }
+    function paintRec(){
+      const rec = recommended();
+      const b = Store.profile().base;
+      const basePlace = COURSE.places.find(x => x.id === b);
+      const w = Store.profile().works;
+      recLabel.textContent = '';
+      recLabel.appendChild(document.createTextNode(rec.size ? 'Recommended for you' : 'Choose your track'));
+
+      const line = c.querySelector('.recline');
+      if(line) line.remove();
+      if(basePlace || w.length){
+        const names = w.map(id => (COURSE.places.find(x=>x.id===id)||{}).name).filter(Boolean);
+        const txt = el('p','recline');
+        txt.textContent = (basePlace ? `Based in ${basePlace.name}` : 'Location not set')
+          + (names.length ? ` · working with ${names.join(', ')}` : ' · no teams selected yet');
+        recLabel.after(txt);
+      }
+
+      const ordered = [...COURSE.tracks].sort((x,y) =>
+        (rec.has(y.id) ? 1 : 0) - (rec.has(x.id) ? 1 : 0));
+      grid2.textContent = '';
+      ordered.forEach(t => grid2.appendChild(trackCard(t, rec.has(t.id))));
+    }
+    paintRec();
     screen('home');
+  }
+
+  function trackCard(t, isRec){
+    const p = trackProgress(t);
+    const card = el('button', 'trackcard' + (isRec ? ' rec' : ''));
+    if(isRec) card.appendChild(el('span','recbadge','Recommended for you'));
+    card.appendChild(el('div','tk', esc(t.audience)));
+    card.appendChild(el('h3', null, esc(t.name)));
+    card.appendChild(el('p', null, esc(t.subtitle)));
+    const meta = el('div','meta');
+    const mins = t.modules.reduce((s,m) => s + (m.minutes||0), 0);
+    meta.appendChild(el('span', null, `${t.modules.length} modules`));
+    meta.appendChild(el('span', null, `~${mins} min`));
+    meta.appendChild(el('span', null, `${t.knowledgeCheck.length}-question check`));
+    card.appendChild(meta);
+    const pr = el('div','tprog'); pr.appendChild(el('i'));
+    pr.firstChild.style.width = p.pct + '%';
+    card.appendChild(pr);
+    card.appendChild(el('div','go', p.pct > 0 ? `Continue — ${p.pct}% complete →` : 'Start this track →'));
+    card.addEventListener('click', () => { location.hash = `#/${t.id}`; });
+    return card;
   }
 
   function renderTrack(){

@@ -1,12 +1,11 @@
-/* TRACK B — "Working with US Teams" (Philippines · India · Sri Lanka participants)
-   The companion view: US working norms explained from the offshore side, including
-   where downstream urgency actually originates. Written to mirror TRACK_US so the
-   translation runs in both directions. */
+/* TRACK B — working with teams in the United States.
+   Like TRACK_APAC this is defined by WHO YOU WORK WITH, not by where you are from.
+   Mirrors TRACK_APAC so the translation runs in both directions. */
 
-const TRACK_OFFSHORE = {
-  id: 'offshore',
-  name: 'Working with US Teams',
-  audience: 'For colleagues in the Philippines, India & Sri Lanka',
+const TRACK_US = {
+  id: 'us',
+  name: 'Working with United States Teams',
+  audience: 'For anyone leading or collaborating with US colleagues',
   subtitle: 'Understanding US working norms, and where the urgency actually comes from',
   regions: 'The US operating system, decoded',
   accent: 'teal',
@@ -16,12 +15,12 @@ const TRACK_OFFSHORE = {
 
   /* ------------------------------------------------------------------ 1 */
   {
-    id:'off-m1', title:'The Other Operating System', minutes:10, stage:'pre',
+    id:'b-m1', title:'The Other Operating System', minutes:10, stage:'pre',
     tagline:'What US colleagues assume, and why it is not rudeness',
     blocks:[
       { type:'lead', text:'Your US colleagues are running a different set of defaults. Most of what can feel abrupt, impatient or impersonal is not directed at you personally, and is not a judgement of your work. It is a different operating system — and once you can read it, a great deal of the friction disappears.' },
       { type:'callout', variant:'insight', title:'This runs in both directions',
-        text:'There is a companion course, Leading Offshore Teams, which teaches US-side leaders to read high-context communication, protect dignity, and stop misreading politeness as agreement. They are being asked to change too. This track is not about becoming American — it is about being read accurately, and reading them accurately in return.' },
+        text:'There is a companion course, Working with PH, India & Sri Lanka Teams, which covers reading high-context communication, protecting dignity, and not mistaking politeness for agreement. Whoever sits on the other side of your working relationship is being asked to change too. This track is not about becoming American — it is about being read accurately, and reading your counterparts accurately in return.' },
       { type:'compare',
         left:  { title:'Familiar to you', tone:'warm', items:[
           'Meaning lives in tone, relationship and context',
@@ -75,7 +74,7 @@ const TRACK_OFFSHORE = {
 
   /* ------------------------------------------------------------------ 2 */
   {
-    id:'off-m2', title:'Directness Decoded', minutes:12, stage:'core',
+    id:'b-m2', title:'Directness Decoded', minutes:12, stage:'core',
     tagline:'What US feedback actually means, and how to give it back',
     blocks:[
       { type:'lead', text:'US feedback is usually less severe than it sounds, and US praise is usually more literal than it sounds. Both are worth learning to read accurately, because misreading either one costs you.' },
@@ -139,7 +138,7 @@ const TRACK_OFFSHORE = {
 
   /* ------------------------------------------------------------------ 3 */
   {
-    id:'off-m3', title:'Individual Credit', minutes:12, stage:'core',
+    id:'b-m3', title:'Individual Credit', minutes:12, stage:'core',
     tagline:'Recognition, self-advocacy, and why "we" can cost you',
     blocks:[
       { type:'lead', text:'In a US workplace, describing your own contribution is not boasting. It is how information about who did what enters the system. If you consistently say "we", a US manager will often be genuinely unable to tell what you personally did — and career decisions are made on that information.' },
@@ -181,7 +180,7 @@ const TRACK_OFFSHORE = {
 
   /* ------------------------------------------------------------------ 4 */
   {
-    id:'off-m4', title:'Speed as Competence', minutes:12, stage:'core',
+    id:'b-m4', title:'Speed as Competence', minutes:12, stage:'core',
     tagline:'Why the pace feels relentless, and what actually needs to be fast',
     blocks:[
       { type:'lead', text:'In US workplaces, responsiveness is read as competence. This is genuinely a cultural default rather than a considered position, and it explains a great deal of behaviour that can otherwise feel impatient or dismissive of quality.' },
@@ -243,12 +242,12 @@ const TRACK_OFFSHORE = {
 
   /* ------------------------------------------------------------------ 5 */
   {
-    id:'off-m5', title:'Where the Urgency Comes From', minutes:14, stage:'core',
+    id:'b-m5', title:'Where the Urgency Comes From', minutes:14, stage:'core',
     tagline:'The chain behind "I need this by Friday"',
     blocks:[
       { type:'lead', text:'When a US leader pushes for a Friday deadline on AR follow-up, there is almost always a client or payer reason driving it. That reason is frequently not explained — not because it is secret, but because to the person passing it on it feels too obvious to state. Seeing the chain makes the pressure legible rather than arbitrary.' },
       { type:'callout', variant:'insight', title:'Why this module exists',
-        text:'The most common thing offshore teams report about US leaders is that deadlines arrive without reasons. The most common blind spot US leaders have, per the companion course, is exactly that — passing on urgency without its origin. Both sides are working on this. Understanding the chain means you can ask the right question when the reason is missing.' },
+        text:'The most common thing delivery teams report about their US counterparts is that deadlines arrive without reasons. The most common blind spot on the US side, per the companion course, is exactly that — passing on urgency without its origin. Both sides are working on this. Understanding the chain means you can ask the right question when the reason is missing.' },
       { type:'h', text:'The chain' },
       { type:'p', text:'Your team processes claims and manages denials for US healthcare providers who are themselves under pressure — from payers, from compliance requirements, and from revenue targets. Here is how that pressure travels.' },
       { type:'activity', activity:{
@@ -306,7 +305,7 @@ const TRACK_OFFSHORE = {
 
   /* ------------------------------------------------------------------ 6 */
   {
-    id:'off-m6', title:'Practice & Commitment', minutes:12, stage:'follow',
+    id:'b-m6', title:'Practice & Commitment', minutes:12, stage:'follow',
     tagline:'Putting it together',
     blocks:[
       { type:'lead', text:'One simulation that combines everything, then three commitments of your own.' },
@@ -417,8 +416,20 @@ const TRACK_OFFSHORE = {
 };
 
 /* ---------------------------------------------------------------- registry */
+/* Tracks are named for the teams you work WITH, never for who you are. A leader in
+   Manila taking on a US account and a leader in Chicago taking on a Manila account
+   are both catered for, and neither is treated as the default learner. */
 const COURSE = {
   title: 'Cross-Cultural Collaboration',
-  subtitle: 'A two-track programme for US and offshore teams',
-  tracks: [ TRACK_US, TRACK_OFFSHORE ]
+  subtitle: 'Working well across the Philippines, India, Sri Lanka and the United States',
+  tracks: [ TRACK_APAC, TRACK_US ],
+
+  /* Onboarding options. `works` maps a selection to the track that covers it. */
+  places: [
+    { id:'ph',    name:'Philippines',       track:'ph-in-lk' },
+    { id:'in',    name:'India',             track:'ph-in-lk' },
+    { id:'lk',    name:'Sri Lanka',         track:'ph-in-lk' },
+    { id:'us',    name:'United States',     track:'us' },
+    { id:'other', name:'Somewhere else',    track:null }
+  ]
 };

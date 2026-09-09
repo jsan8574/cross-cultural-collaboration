@@ -11,17 +11,52 @@ coaching language and RCM consequences behind every "Coaching Key Points" callou
 
 ## The two tracks
 
-| Track | Audience | Modules | Knowledge check |
-|---|---|---|---|
-| **Leading Offshore Teams** | US-side leaders | 12 | 15 questions |
-| **Working with US Teams** | Colleagues in PH · India · Sri Lanka | 6 | 12 questions |
+**Tracks are named for the teams you work *with*, never for who you are.** A leader in
+Manila taking on a US account and a leader in Chicago taking on a Manila account are both
+catered for, and neither is treated as the default learner. No nationality is the
+assumed audience.
 
-The second track is the companion view: US low-context norms, individualism and what it
-means for feedback and recognition, speed-as-competence, and how US client expectations
-flow downstream (payer timely-filing windows, compliance deadlines, revenue targets)
-so offshore teams can see where a "Friday" deadline actually originates.
+| Track | id | Covers | Modules | Knowledge check |
+|---|---|---|---|---|
+| **Working with PH, India & Sri Lanka Teams** | `ph-in-lk` | Communication, hierarchy and trust across the three cultures | 12 | 15 questions |
+| **Working with United States Teams** | `us` | US working norms, and where deadline urgency originates | 6 | 12 questions |
+
+The second track covers low-context norms, individualism and what it means for feedback
+and recognition, speed-as-competence, and how US client expectations flow downstream
+(payer timely-filing windows, compliance deadlines, revenue targets) so a delivery team
+can see where a "Friday" deadline actually originates.
 
 Tracks are independent: separate progress, separate scores, separate certificates.
+
+### Onboarding decides what is *recommended*, never what is *allowed*
+
+The home screen asks two things: where the learner is based, and which teams they work
+with most closely. Each selected place maps to the track that covers it
+(`COURSE.places` in `js/track-us-norms.js`), so the recommendation is purely "you work
+with X, therefore take the module about X." Selecting both directions recommends both.
+Every track stays clickable regardless of what is selected, and the learner can skip the
+questions entirely.
+
+Worked examples:
+
+| Based in | Works with | Recommended |
+|---|---|---|
+| India | United States | Working with United States Teams |
+| United States | Philippines, Sri Lanka | Working with PH, India & Sri Lanka Teams |
+| Sri Lanka | India, United States | **Both** |
+| Philippines | India | Working with PH, India & Sri Lanka Teams |
+
+The last row is the case worth noting: no US involvement at all, and the programme still
+works — which is the point of framing tracks by counterpart rather than by nationality.
+
+### Language rule applied to the content
+
+Inside the tracks, "US" is kept **only where it denotes the client organisation** — these
+teams service US healthcare providers, so "US payer", "US provider" and "the US team"
+(meaning the onshore client-facing team) are business facts. Every phrase that presumed
+the *learner* was American was removed: "US leaders" became "leaders", "US default style"
+became "Direct, low-context default", "offshore teams" became "these teams" or "the
+delivery team". The word "offshore" no longer appears anywhere in the content.
 
 ---
 
@@ -29,10 +64,10 @@ Tracks are independent: separate progress, separate scores, separate certificate
 
 ```
 index.html              shell + routing targets (cache-bust ?v=N lives here)
-css/styles.css          all styling; light/dark; deck-derived palette
-js/track-us.js          TRACK_US  — content for the US-side track
-js/track-offshore.js    TRACK_OFFSHORE + the COURSE registry
-js/store.js             localStorage persistence + elapsed-time tracking
+css/styles.css          all styling; cool-only palette
+js/track-apac.js        TRACK_APAC — working with PH / India / Sri Lanka teams
+js/track-us-norms.js    TRACK_US + the COURSE registry and place list
+js/store.js             localStorage persistence, learner profile, elapsed time
 js/activities.js        the six activity renderers
 js/certificate.js       canvas certificate (PNG) + jsPDF answers export
 js/app.js               routing, block rendering, quizzes, progress roll-up
@@ -42,10 +77,16 @@ fonts/                  Proxima Nova 400/600/700 + matching italics
 
 ### Adding a third track
 
-`COURSE.tracks` at the bottom of `js/track-offshore.js` is the registry. Add a new file
+`COURSE.tracks` at the bottom of `js/track-us-norms.js` is the registry. Add a new file
 defining a track object with the same shape, load it in `index.html` before `app.js`,
-and push it into `COURSE.tracks`. Storage keys are namespaced `ccl.v1.<trackId>.*`, so a
-new track cannot collide with an existing learner's progress. Nothing else needs changing.
+push it into `COURSE.tracks`, and add any new locations to `COURSE.places` with a `track`
+pointing at its id — the recommendation logic then picks it up with no further changes.
+Storage keys are namespaced `ccl.v2.<trackId>.*`, so a new track cannot collide with an
+existing learner's progress.
+
+> **Storage note:** the namespace moved from `ccl.v1` to `ccl.v2` when the track ids
+> changed (the old `us` id meant a different track). Any progress saved before that is
+> orphaned rather than misread. Bump the namespace again if track ids ever change.
 
 ---
 
@@ -100,14 +141,14 @@ The interface is light-only, matching the reference. There is no dark mode and n
 toggle — if one is wanted later, redefine the tokens under
 `@media (prefers-color-scheme: dark)` and nothing else needs to change.
 
-**No logo is used anywhere**, per instruction. The header wordmark and the certificate
-mark are drawn in code (three teal bars, and two overlapping rings respectively). If the
-the organisation logo should be reinstated, drop the file into `fonts/`-adjacent
-assets and swap the inline `<svg>` in the `.brandmark` block of `index.html`.
+**No logo or graphic mark is used anywhere**, per instruction. The header carries the
+course name as plain text only. The certificate still draws two overlapping rings as a
+neutral decorative mark — say the word if that should go too. To add a real logo, drop
+the file in and swap the `.brandmark` block in `index.html`.
 
 ### Layout
 
-- Sticky dark header: mark · edition + course title · learner greeting · live **Active
+- Sticky dark header: course name · edition + track title · learner greeting · live **Active
   time** · **Save Now** · **Switch Track**. Collapses progressively — greeting and clock
   drop below 900px and 760px respectively.
 - Persistent left rail (296px): course progress, section list with numbered squares

@@ -2,7 +2,7 @@
    Storage is namespaced per track so adding a track never collides with an existing one. */
 
 const Store = (() => {
-  const NS = 'ccl.v1';
+  const NS = 'ccl.v2';
   const mem = {};                       // fallback when localStorage is unavailable
   let usingMem = false;
 
@@ -26,6 +26,16 @@ const Store = (() => {
   /* ---- learner name is shared across tracks ---- */
   function name(){ return raw(`${NS}.name`, '') || ''; }
   function setName(v){ setRaw(`${NS}.name`, v); }
+
+  /* Learner context: where they sit, and which teams they work with. Shared
+     across tracks — it decides what we recommend, never what they may take. */
+  function profile(){
+    const v = raw(`${NS}.profile`, null);
+    if(!v) return { base:'', works:[] };
+    try{ const o = JSON.parse(v); return { base:o.base||'', works:o.works||[] }; }
+    catch(e){ return { base:'', works:[] }; }
+  }
+  function setProfile(o){ setRaw(`${NS}.profile`, JSON.stringify(o)); }
 
   /* ---- elapsed time ------------------------------------------------------
      Accumulates deltas rather than trusting (now - start). A delta larger than
@@ -104,7 +114,7 @@ const Store = (() => {
     if(track === t) last = Date.now();
   }
 
-  return { get, set, name, setName, bind, flush, elapsed, fmt, fmtClock, stamp, touch,
+  return { get, set, name, setName, profile, setProfile, bind, flush, elapsed, fmt, fmtClock, stamp, touch,
            act, setAct, txt, setTxt, done, markDone, quiz, setQuiz, resetTrack,
            get degraded(){ return usingMem; } };
 })();

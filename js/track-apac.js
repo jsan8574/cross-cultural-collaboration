@@ -1,12 +1,13 @@
-/* TRACK A — "Leading Offshore Teams" (US-side participants)
-   Source: "Cross culture training Induction.pptx" + reviewer feedback (structural fixes,
-   content gaps, profile reframing). Facilitator notes supply all Coaching Key Points. */
+/* TRACK A — working with teams in the Philippines, India and Sri Lanka.
+   Defined by WHO YOU WORK WITH, not by where you are from: a leader in Colombo
+   taking on an India team needs this as much as one in Chicago.
+   Source: "Cross culture training Induction.pptx" + reviewer feedback. */
 
-const TRACK_US = {
-  id: 'us',
-  name: 'Leading Offshore Teams',
-  audience: 'For US-side leaders',
-  subtitle: 'Understanding communication, culture and the people you lead',
+const TRACK_APAC = {
+  id: 'ph-in-lk',
+  name: 'Working with PH, India & Sri Lanka Teams',
+  audience: 'For anyone leading or collaborating with these teams',
+  subtitle: 'How communication, hierarchy and trust work across the Philippines, India and Sri Lanka',
   regions: 'Philippines · India · Sri Lanka',
   accent: 'blue',
   passMark: 75,
@@ -15,15 +16,15 @@ const TRACK_US = {
 
   /* ------------------------------------------------------------------ 1 */
   {
-    id:'us-m1', title:'Two Operating Systems', minutes:8, stage:'pre',
+    id:'a-m1', title:'Two Operating Systems', minutes:8, stage:'pre',
     tagline:'Why this course exists, and the gap it closes',
     blocks:[
-      { type:'lead', text:'Neither style is wrong. They are different operating systems. When US leaders apply their own defaults to teams in the Philippines, India and Sri Lanka, the result is miscommunication and wasted talent — not because anyone failed, but because no one translated.' },
+      { type:'lead', text:'Neither style is wrong. They are different operating systems. When a leader applies direct, low-context defaults to teams in the Philippines, India and Sri Lanka, the result is miscommunication and wasted talent — not because anyone failed, but because no one translated.' },
       { type:'p', text:'This is not a country guide. It moves from frameworks, to people, to self-examination, to application in your actual work — billing, coding, claims and AR — and then to the protocols that hold up under deadline pressure.' },
       { type:'callout', variant:'insight', title:'There is a companion to this track',
-        text:'A parallel course, Working with US Teams, teaches colleagues in the Philippines, India and Sri Lanka to read US working norms — directness, individual recognition, speed-as-competence, and where the urgency in your deadlines actually originates. Translation only works if it runs in both directions. You can switch tracks at any time from the course menu.' },
+        text:'A parallel course, Working with US Teams, covers the same ground from the other side — US working norms, individual recognition, speed-as-competence, and where deadline urgency originates. Whichever direction you are translating in, it only works if it runs both ways. You can switch tracks at any time.' },
       { type:'compare',
-        left:  { title:'US default style', tone:'cool', items:[
+        left:  { title:'Direct, low-context default', tone:'cool', items:[
           'Direct — say what you mean',
           'Individual accountability and recognition',
           'Speed signals competence',
@@ -42,7 +43,7 @@ const TRACK_US = {
           title:'Sort the operating systems',
           instructions:'Twelve workplace assumptions. Drag each into the culture whose default it describes. On a phone, tap an item then tap a bucket.',
           buckets:[
-            { id:'us',   label:'US default',             hint:'Low-context, individualist' },
+            { id:'us',   label:'Direct / low-context',    hint:'e.g. US, UK, Australia, Germany' },
             { id:'asia', label:'PH · India · Sri Lanka', hint:'High-context, collectivist' } ],
           items:[
             { text:'Say what you mean — meaning is in the words', bucket:'us' },
@@ -60,23 +61,23 @@ const TRACK_US = {
           key:{ title:'Coaching Key Points', points:[
             'Neither column is the correct one. Both are internally coherent systems that work perfectly inside their own context.',
             'The damage happens at the interface — when a manager running the left column reads signals produced by the right column and scores them as performance problems.',
-            'Almost every frustration US managers report about offshore teams ("won’t flag problems", "won’t take initiative", "too slow") is a left-column reading of a right-column behaviour.',
+            'Almost every frustration managers report about these teams ("won’t flag problems", "won’t take initiative", "too slow") is a left-column reading of a right-column behaviour.',
             'Your job is not to abandon your defaults. It is to build the translation layer between them — and to make your own defaults legible in return.' ] } } },
       { type:'cfu', questions:[
-        { q:'A US leader describes their Manila team as "lacking urgency" because they double-check work before submitting. What is the most likely explanation?',
+        { q:'A leader describes their Manila team as "lacking urgency" because they double-check work before submitting. What is the most likely explanation?',
           options:[
             'The team is under-trained and needs a speed target',
             'Thoroughness signals competence and respect in their culture, so care is being read as slowness',
             'The team is deliberately slowing down to avoid extra work',
             'There is no cultural factor — this is an individual performance issue' ],
           answer:1,
-          why:'Speed-as-virtue is a US default. Where thoroughness is the marker of competence and respect, careful checking is the team performing well by their own standard. Diagnose before you correct.' } ] }
+          why:'Speed-as-virtue is a low-context default. Where thoroughness is the marker of competence and respect, careful checking is the team performing well by their own standard. Diagnose before you correct.' } ] }
     ]
   },
 
   /* ------------------------------------------------------------------ 2 */
   {
-    id:'us-m2', title:'The Culture Iceberg', minutes:10, stage:'pre',
+    id:'a-m2', title:'The Culture Iceberg', minutes:10, stage:'pre',
     tagline:'What is visible, what drives behaviour, and where the four cultures actually sit',
     blocks:[
       { type:'lead', text:'Culture is the invisible rulebook everyone follows — but nobody wrote down. The iceberg is the single most useful frame in this course. Return to it every time a behaviour seems puzzling.' },
@@ -128,7 +129,7 @@ const TRACK_US = {
             'Respect for hierarchy in the Philippines, at 88, is the strongest single tendency on this board — and it sits against 38 in the US, a fifty-point distance.',
             'That distance explains the largest cluster of RCM problems: denials not escalated, blockers not raised, deadlines agreed to that were never achievable.',
             'Look across the whole grid rather than down one column. Every one of these four cultures is high on something — the US is not the low-scoring outlier it appears to be if you only read the first three columns.',
-            'Read the chart in both directions. A US colleague at 38 on hierarchy looks disrespectful of seniority from an 88 vantage point, exactly as an 88 looks passive from a 38 one. Neither reading is generous, and neither is correct.',
+            'Read the chart in both directions. A colleague sitting at 38 on hierarchy looks disrespectful of seniority from an 88 vantage point, exactly as an 88 looks passive from a 38 one. Neither reading is generous, and neither is correct.',
             'Common misreads in this direction: "she agreed" (she was being polite) · "he lacks initiative" (he is waiting for explicit permission) · "they are slow to decide" (they are building consensus) · "nobody pushed back" (nobody could, publicly).' ] } } },
       { type:'cfu', questions:[
         { q:'You notice your Sri Lanka team never disagrees with you in a group call. Using the iceberg, what is the useful first question?',
@@ -144,7 +145,7 @@ const TRACK_US = {
 
   /* ------------------------------------------------------------------ 3 */
   {
-    id:'us-m3', title:'Meet Your Team', minutes:14, stage:'pre',
+    id:'a-m3', title:'Meet Your Team', minutes:14, stage:'pre',
     tagline:'Who they are, beyond job titles',
     blocks:[
       { type:'lead', text:'Six composite colleagues. They are not cultural types — they are the kind of whole person sitting behind each name on your org chart. Turn each card to see what your leadership actually means to them.' },
@@ -162,9 +163,9 @@ const TRACK_US = {
               coach:'Her role carries real weight beyond her own paycheque, and that raises the stakes of ordinary management moments. The takeaway is not that she is fragile — it is that casual indifference has consequences you will not see reported back to you.' },
             { mono:'JB', name:'Jerome, 34', role:'Team Lead', place:'Metro Manila, originally Mindanao · Philippines',
               meta:'6 years tenure · Born-again Christian · Married, two children',
-              front:'Migrated from Mindanao to Manila at 22 for work, navigating a regional identity divide — Mindanaoan Filipinos face subtle bias from Manila-raised colleagues. Deeply proud, quietly ambitious, protective of his team’s reputation with US leadership. He was passed over for promotion once and is watching whether US leadership is fair.',
+              front:'Migrated from Mindanao to Manila at 22 for work, navigating a regional identity divide — Mindanaoan Filipinos face subtle bias from Manila-raised colleagues. Deeply proud, quietly ambitious, protective of his team’s reputation with overseas leadership. He was passed over for promotion once and is watching whether leadership abroad is fair.',
               back:'He needs to feel respected as a leader in front of his team. If you override his decisions without explanation you erode his authority — and he will not tell you. He will simply become less proactive. Brief him privately before any team-wide announcement.',
-              coach:'Jerome carries double weight: regional outsider and frontline leader visible to both his US manager and his local team. The promotion history matters — every later decision about recognition is filtered through that memory. Briefing him privately before an all-hands costs five minutes and almost nothing else.' },
+              coach:'Jerome carries double weight: regional outsider and frontline leader visible to both his overseas manager and his local team. The promotion history matters — every later decision about recognition is filtered through that memory. Briefing him privately before an all-hands costs five minutes and almost nothing else.' },
             { mono:'PK', name:'Priya, 26', role:'Operations Analyst', place:'Chennai · India',
               meta:'2 years tenure · Hindu, Brahmin background · Urban, educated',
               front:'Engineering graduate navigating family pressure around marriage while establishing herself as a technical contributor. Holds strong opinions she rarely voices upward. Code-switches between a deferential professional mode and a more assertive personal one.',
@@ -177,9 +178,9 @@ const TRACK_US = {
               coach:'The contrast with Priya is the lesson: she is early-career and constrained by deference, he is senior and evaluating whether merit is actually what gets rewarded here. Name his institutional knowledge explicitly in team settings, monthly. That is not consolation — it is accurate credit for the most valuable asset on your account.' },
             { mono:'NF', name:'Nimal, 32', role:'Finance & Operations', place:'Colombo · Sri Lanka',
               meta:'4 years tenure · Buddhist, Sinhalese · Lives with parents',
-              front:'Grew up in the shadow of Sri Lanka’s 26-year civil war, which ended in 2009. His generation carries a collective memory of instability, and the 2022 economic crisis — fuel shortages, food inflation, extended power cuts — made continuity feel consequential in a way US colleagues rarely register. Buddhist values of patience, non-confrontation and communal harmony genuinely shape his working style.',
+              front:'Grew up in the shadow of Sri Lanka’s 26-year civil war, which ended in 2009. His generation carries a collective memory of instability, and the 2022 economic crisis — fuel shortages, food inflation, extended power cuts — made continuity feel consequential in a way colleagues elsewhere rarely register. Buddhist values of patience, non-confrontation and communal harmony genuinely shape his working style.',
               back:'Stability and predictability are profoundly motivating. Sudden process changes, unclear expectations or erratic feedback register more strongly than you may anticipate. His patience and harmony-seeking are not passivity — they are values. Consistency is what keeps him fully present.',
-              coach:'When Nimal takes time to consult before deciding, he is being conscientious — meeting that with impatience damages trust. During 2022, team members were managing household logistics completely invisible to their US managers, and delivering anyway.' },
+              coach:'When Nimal takes time to consult before deciding, he is being conscientious — meeting that with impatience damages trust. During 2022, team members were managing household logistics completely invisible to their managers abroad, and delivering anyway.' },
             { mono:'DT', name:'Dilani, 29', role:'Senior AR Analyst', place:'Colombo, family from the Eastern Province · Sri Lanka',
               meta:'5 years tenure · Tamil · Hindu · Supports a younger brother through university',
               front:'Sri Lankan Tamil, raised in the Eastern Province and now based in Colombo, working primarily in English and Sinhala. She is one of the strongest technical performers on L1-2 escalations and mentors two junior analysts informally. She is precise, evidence-driven, and notably reluctant to speculate in front of a group — when she speaks, she has already checked.',
@@ -199,12 +200,12 @@ const TRACK_US = {
 
   /* ------------------------------------------------------------------ 4 */
   {
-    id:'us-m4', title:'Reading What Is Not Said', minutes:14, stage:'core',
+    id:'a-m4', title:'Reading What Is Not Said', minutes:14, stage:'core',
     tagline:'High-context communication, saving face, and the signals you are missing',
     blocks:[
       { type:'lead', text:'In all three cultures, what is NOT said is often more important than what is said. Your job is to build the channels where the unsaid can surface safely.' },
       { type:'compare',
-        left:  { title:'Low-context (US default)', tone:'cool', items:[
+        left:  { title:'Low-context (direct cultures)', tone:'cool', items:[
           'Meaning is in the words. Say what you mean.',
           'Instructions should be explicit and written down',
           '"If you have a problem, tell me directly"',
@@ -223,7 +224,7 @@ const TRACK_US = {
       { type:'h', text:'Saving face' },
       { type:'p', text:'"Face" is a person’s social dignity, reputation and sense of honour — in their own eyes and in the eyes of others. It is earned through competence, seniority and respect. Losing face means being corrected in public, having your competence questioned openly, delivering bad news that reflects poorly on you, being asked a question you cannot answer publicly, or having your authority undermined in front of your team.' },
       { type:'callout', variant:'insight', title:'Saving face is not deception',
-        text:'It is a sophisticated social system that protects everyone’s dignity and lets work continue without interpersonal rupture. Even in US culture you do not tell your boss "that is a terrible idea" in a meeting — you say "I want to make sure I understand the approach" and raise it privately. High-context cultures have simply formalised this much more deeply.' },
+        text:'It is a sophisticated social system that protects everyone’s dignity and lets work continue without interpersonal rupture. Even in the most direct cultures you do not tell your boss "that is a terrible idea" in a meeting — you say "I want to make sure I understand the approach" and raise it privately. High-context cultures have simply formalised this much more deeply.' },
       { type:'activity', activity:{
           kind:'match', id:'a4-signals',
           title:'What they said, what it meant',
@@ -277,7 +278,7 @@ const TRACK_US = {
       { type:'activity', activity:{
           kind:'bucket', id:'a4-doavoid',
           title:'Do this, avoid that',
-          instructions:'Twelve leadership behaviours. Sort them. The "avoid" column is not a list of failures — it is a list of behaviours that are effective in US culture and simply do not translate.',
+          instructions:'Twelve leadership behaviours. Sort them. The "avoid" column is not a list of failures — it is a list of behaviours that are effective in direct, low-context cultures and simply do not translate.',
           buckets:[
             { id:'do',    label:'Do this',    hint:'Builds trust' },
             { id:'avoid', label:'Avoid this', hint:'Damages trust' } ],
@@ -295,7 +296,7 @@ const TRACK_US = {
             { text:'Critical feedback in public, or in writing with no private conversation first', bucket:'avoid' },
             { text:'Assuming silence in a meeting means no concerns', bucket:'avoid' } ],
           key:{ title:'Coaching Key Points', points:[
-            'The goal is to expand your toolkit, not to feel bad about your defaults. Every "avoid" item is something that works well with a US team.',
+            'The goal is to expand your toolkit, not to feel bad about your defaults. Every "avoid" item is something that works well in a low-context setting.',
             'The highest-leverage single item on the "do" list: follow up 1:1 with anyone who was quiet in a group meeting. "I value your perspective — anything come to mind since we spoke?"',
             'Practice prompt: pick ONE item from the do column and deliberately try it in your next team meeting.' ] } } },
       { type:'cfu', questions:[
@@ -320,7 +321,7 @@ const TRACK_US = {
 
   /* ------------------------------------------------------------------ 5 */
   {
-    id:'us-m5', title:'Hierarchy & Decisions', minutes:10, stage:'core',
+    id:'a-m5', title:'Hierarchy & Decisions', minutes:10, stage:'core',
     tagline:'Why waiting is not the same as not caring',
     blocks:[
       { type:'lead', text:'What looks like slowness or indecision is often cultural deference — not a capability gap. What looks like an initiative deficit is often a very clear understanding of the cultural boundaries of one’s role.' },
@@ -373,7 +374,7 @@ const TRACK_US = {
 
   /* ------------------------------------------------------------------ 6 */
   {
-    id:'us-m6', title:'Teamwork, Faith & Difference Within', minutes:12, stage:'core',
+    id:'a-m6', title:'Teamwork, Faith & Difference Within', minutes:12, stage:'core',
     tagline:'Collective work, the working calendar, and why "the India team" is not one thing',
     blocks:[
       { type:'lead', text:'Collectivism is not the absence of individual ambition. It is a different expression of professional identity.' },
@@ -428,7 +429,7 @@ const TRACK_US = {
 
   /* ------------------------------------------------------------------ 7 */
   {
-    id:'us-m7', title:'Culture in the Revenue Cycle', minutes:12, stage:'core',
+    id:'a-m7', title:'Culture in the Revenue Cycle', minutes:12, stage:'core',
     tagline:'Where these dynamics cost real money',
     blocks:[
       { type:'lead', text:'These patterns are happening on your team right now, with cultural roots you may not have seen. None of them are performance problems at their root. They are cultural responses to the work environment — and changing the environment changes the behaviour.' },
@@ -506,7 +507,7 @@ const TRACK_US = {
 
   /* ------------------------------------------------------------- 8 (NEW) */
   {
-    id:'us-m8', title:'Under Pressure', minutes:14, stage:'core',
+    id:'a-m8', title:'Under Pressure', minutes:14, stage:'core',
     tagline:'Month-end, audit season, and why cultural dynamics intensify exactly when they cost most',
     blocks:[
       { type:'lead', text:'Cultural dynamics are not constant. They intensify under pressure. Indirect communicators become more indirect, face-saving behaviours strengthen, and hierarchy-deference becomes more pronounced — which means your signal quality degrades precisely when the stakes are highest.' },
@@ -583,7 +584,7 @@ const TRACK_US = {
 
   /* ------------------------------------------------------------- 9 (NEW) */
   {
-    id:'us-m9', title:'Collaboration Protocols', minutes:14, stage:'core',
+    id:'a-m9', title:'Collaboration Protocols', minutes:14, stage:'core',
     tagline:'Awareness is not enough — these are the standing rules',
     blocks:[
       { type:'lead', text:'Everything so far has been diagnosis. This module is the protocol layer: the specific, written standards that make cross-cultural collaboration work without requiring anyone to read minds on the day. Awareness varies with how tired you are. Protocols do not.' },
@@ -595,8 +596,8 @@ const TRACK_US = {
         { l:'Status against commitment', d:'Each workstream marked green / amber / red against what was promised, with the number, not an adjective.' },
         { l:'What changed since last report', d:'Explicitly including anything that got worse. A named field for bad news means nobody has to decide whether to volunteer it.' },
         { l:'Open risks with an owner and a date', d:'Written risks do not require anyone to speak up on a call. This is the field where hedges become facts.' },
-        { l:'Decisions needed from the US side', d:'Names the authority gap directly, so waiting-for-permission stops being invisible.' },
-        { l:'What we need from the client', d:'Gives the offshore team a legitimate channel to ask upward without it reading as a complaint.' } ] },
+        { l:'Decisions needed from the client side', d:'Names the authority gap directly, so waiting-for-permission stops being invisible.' },
+        { l:'What we need from the client', d:'Gives the delivery team a legitimate channel to ask upward without it reading as a complaint.' } ] },
       { type:'callout', variant:'rcm', title:'Why the "what changed, including anything worse" field matters',
         text:'Priya’s $40K write-off began as "there may be some inconsistency" buried in two emails. A standing field labelled "what got worse this week" converts that from a brave disclosure into a routine form entry. You are not asking for more courage — you are lowering the courage required.' },
       { type:'h', text:'Protocol 2 — Written versus verbal feedback' },
@@ -663,7 +664,7 @@ const TRACK_US = {
 
   /* ------------------------------------------------------------ 10 (NEW) */
   {
-    id:'us-m10', title:'Cross-Cultural Virtual Meetings', minutes:12, stage:'core',
+    id:'a-m10', title:'Cross-Cultural Virtual Meetings', minutes:12, stage:'core',
     tagline:'The call is where most of this is won or lost',
     blocks:[
       { type:'lead', text:'Your team collaborates primarily by video call. That format amplifies every dynamic in this course: silence is more ambiguous, hierarchy is more visible, and the cost of interrupting is higher. A well-run cross-cultural call is a designed thing, not a natural one.' },
@@ -675,11 +676,11 @@ const TRACK_US = {
         { l:'Keep the invite list as small as the decision requires', d:'Every additional senior attendee raises the cost of disagreement for everyone junior to them.' } ] },
       { type:'h', text:'During the call' },
       { type:'protocol', title:'Handling silence, and creating room', items:[
-        { l:'Wait longer than is comfortable', d:'Count to seven after asking a question. US meeting norms fill a three-second gap; the answer you want often arrives at second six.' },
+        { l:'Wait longer than is comfortable', d:'Count to seven after asking a question. Direct-culture meeting norms fill a three-second gap; the answer you want often arrives at second six.' },
         { l:'Never ask "does anyone have concerns?"', d:'It has one socially safe answer in a hierarchical setting. Ask instead: "what would make this harder to deliver?" or "what is the part of this you would push back on if I were not here?"' },
         { l:'Use the chat deliberately, not incidentally', d:'Chat lowers the cost of contributing enormously — it is asynchronous, less public, and does not require interrupting a senior. Ask a question and explicitly say "put it in chat, I will read them all out." Then actually read them out, without attributing names unless the person used theirs.' },
         { l:'Go round by name, in a fixed order, for status', d:'A predictable round removes the decision about whether to speak. Announce the order at the start so nobody is caught unprepared.' },
-        { l:'Use breakouts for anything requiring genuine debate', d:'Three people in a room without the senior US leader will surface what twelve people with them will not. Give breakouts a written question and ask for a written answer back — that way one person reports the group’s view rather than their own.' },
+        { l:'Use breakouts for anything requiring genuine debate', d:'Three people in a room without the senior leader present will surface what twelve people with them will not. Give breakouts a written question and ask for a written answer back — that way one person reports the group’s view rather than their own.' },
         { l:'Have the most senior person speak last', d:'If you state your view first, you have ended the discussion. This costs you nothing and changes what you hear.' },
         { l:'Do not correct anyone on the call', d:'Ever, on any subject, however gently. Note it and take it to a 1:1.' } ] },
       { type:'h', text:'After the call' },
@@ -702,7 +703,7 @@ const TRACK_US = {
           key:{ title:'Coaching Key Points', points:[
             'Notice the shape: every step before the discussion lowers the cost of dissent, and every step after it captures what the call itself could not.',
             'The two steps people cut when short of time — the pre-read and the 1:1 follow-up — are the two that do most of the work.',
-            'Speaking last is free and changes everything. If the senior US voice states a position first, the meeting is over and the remaining time is confirmation.',
+            'Speaking last is free and changes everything. If the senior voice states a position first, the meeting is over and the remaining time is confirmation.',
             'Breakouts without you present are the most reliable way to surface genuine disagreement in a high-deference group. Ask for a written group answer so no individual owns the dissent.' ] } } },
       { type:'cfu', questions:[
         { q:'You ask your team a question on a call and get silence. What is the most effective immediate response?',
@@ -726,7 +727,7 @@ const TRACK_US = {
 
   /* ----------------------------------------------------------------- 11 */
   {
-    id:'us-m11', title:'Blind Spots & Practice', minutes:16, stage:'core',
+    id:'a-m11', title:'Blind Spots & Practice', minutes:16, stage:'core',
     tagline:'A bias inventory, two simulations and a rewrite',
     blocks:[
       { type:'lead', text:'None of us consciously think these things. But they show up in how carefully we craft feedback, how often we check in, and how much benefit of the doubt we extend. Name them to change them.' },
@@ -754,7 +755,7 @@ const TRACK_US = {
             { mono:'05', name:'Urgency without origin', role:'Bias pattern',
               front:'Passing on a deadline without passing on the reason for it. To you the urgency is self-evident; to a team several steps removed from the payer and the client, it arrives as an arbitrary demand.',
               back:'Never transmit a deadline without its driver. "Friday, because the payer’s timely-filing window closes and after that the claim is unbillable" produces genuine engagement. "Friday" produces compliance at best.',
-              coach:'This is the single most common complaint from offshore teams about US leaders, and it is entirely fixable with one extra sentence. The companion track covers the same ground from the other side.' },
+              coach:'This is the single most common complaint these teams make about leaders working with them from abroad, and it is entirely fixable with one extra sentence. The companion track covers the same ground from the other side.' },
             { mono:'06', name:'Feedback without translation', role:'Bias pattern',
               front:'US-style blunt feedback — "this isn’t good enough" — lands as public humiliation.',
               back:'Critical feedback: always private, always framed as coaching, always followed up in writing.',
@@ -823,7 +824,7 @@ const TRACK_US = {
             'Written follow-up matters. It gives processing time and removes the pressure to respond correctly in the moment.' ] } } },
       { type:'h', text:'Rewrite the message' },
       { type:'p', text:'Here is a real US-default message. Read it carefully, then rewrite it.' },
-      { type:'quote', text:'Team — I’ve reviewed this week’s denial report. The error rate on orthopedic coding is unacceptable at 14%. This needs to be fixed immediately. Rose Marie and Jerome, I need an explanation of what went wrong and a corrective action plan by EOD tomorrow. If this happens again there will be consequences. — US Manager' },
+      { type:'quote', text:'Team — I’ve reviewed this week’s denial report. The error rate on orthopedic coding is unacceptable at 14%. This needs to be fixed immediately. Rose Marie and Jerome, I need an explanation of what went wrong and a corrective action plan by EOD tomorrow. If this happens again there will be consequences. — Manager' },
       { type:'checklist', id:'c11-rewrite', title:'Your rewrite should:', items:[
         'Protect dignity — remove public blame',
         'Acknowledge the relationship first',
@@ -841,7 +842,7 @@ const TRACK_US = {
 
   /* ----------------------------------------------------------------- 12 */
   {
-    id:'us-m12', title:'Empathy in Practice', minutes:10, stage:'follow',
+    id:'a-m12', title:'Empathy in Practice', minutes:10, stage:'follow',
     tagline:'Not principles — actions you can start this week',
     blocks:[
       { type:'lead', text:'Empathy is not a soft extra. It is how you unlock the full capability of the people you lead. It is the work.' },
@@ -873,7 +874,7 @@ const TRACK_US = {
           key:{ title:'Coaching Key Points', points:[
             'These are five actions, not five values. Each one can be done this week.',
             'If you only adopt one: follow up 1:1 with the quiet people after every group meeting.',
-            'From a composite team-member voice: "The best manager I had from the US never pretended to understand everything about my life. But she always tried to. That trying was everything."' ] } } },
+            'From a composite team-member voice: "The best manager I had from overseas never pretended to understand everything about my life. But she always tried to. That trying was everything."' ] } } },
       { type:'h', text:'Your commitment' },
       { type:'p', text:'Take ninety seconds each. Write honestly — these are yours, and they go into your PDF export.' },
       { type:'reflect', id:'r12-1', prompt:'One person on my team I know least well — and one question I will ask them in my next 1:1.' },
@@ -884,14 +885,14 @@ const TRACK_US = {
         { t:'Your team members are whole people', d:'Shaped by region, class, language, faith and family. Not cultural types. The work starts with seeing them.' },
         { t:'Silence, politeness and agreement are different things', d:'Build structures for honest communication. What is not said is often the most important signal.' },
         { t:'Dignity is non-negotiable', d:'How you treat people in low moments defines your leadership more than how you treat them in good ones.' },
-        { t:'US defaults are one operating system, not the universal one', d:'Directness, speed and individual accountability are effective at home, and sometimes damaging abroad.' },
+        { t:'Your own defaults are one operating system, not the universal one', d:'Directness, speed and individual accountability are effective in some settings, and damaging in others.' },
         { t:'Empathy is a leadership skill', d:'It is not a soft extra. It is how you unlock the full capability of the people you lead. It is the work.' } ] },
       { type:'countrycards', cards:[
         { flag:'🇵🇭', name:'Philippines', text:'Lead with warmth. Build personal bonds first. Protect team leads’ authority. Never correct publicly.' },
         { flag:'🇮🇳', name:'India', text:'Lead with clarity and respect. Give feedback privately. Explicitly invite dissent. Acknowledge institutional knowledge.' },
         { flag:'🇱🇰', name:'Sri Lanka', text:'Lead with patience. Consensus builds loyalty. Silence is not approval. Consistency is what keeps them present.' } ] },
       { type:'callout', variant:'insight', title:'The close',
-        text:'This course did not give you a set of rules. It gave you a set of people to think about, a set of protocols to run, and a set of questions to ask yourself. That is the practice. Come back to it — and encourage your offshore colleagues to take the companion track, so the translation runs both ways.' }
+        text:'This course did not give you a set of rules. It gave you a set of people to think about, a set of protocols to run, and a set of questions to ask yourself. That is the practice. Come back to it — and encourage the colleagues on the other side of the relationship to take the companion track, so the translation runs both ways.' }
     ]
   }
 
@@ -933,7 +934,7 @@ const TRACK_US = {
     { q:'Priya signals a payer adjudication error across two emails using phrases like "there may be some inconsistency." Nothing is done; three months later it is a $40K write-off. The lesson is:',
       options:[ 'Priya should have escalated more forcefully', 'Email is the wrong channel for escalations', 'Treat hedge language as a potential serious flag and follow every one with "tell me more"', 'The team needs a formal escalation policy' ],
       answer:2,
-      why:'"There may be some inconsistency" was her culturally appropriate way of saying "this is a serious problem." US managers miss these signals constantly.' },
+      why:'"There may be some inconsistency" was her culturally appropriate way of saying "this is a serious problem." Managers miss these signals constantly.' },
     { q:'Why should escalation triggers be based on elapsed time rather than on a severity judgement?',
       options:[ 'Time-based rules are easier to audit', 'It removes the judgement call about whether to bother a senior — exactly where deference intervenes', 'Severity is hard to define in RCM work', 'It reduces total escalation volume' ],
       answer:1,
@@ -946,7 +947,7 @@ const TRACK_US = {
       options:[ 'Ask "does anyone have concerns?" twice', 'Give your own recommendation first so the team has something concrete to react to', 'Use small breakouts without you present, requiring a written group answer', 'Extend the meeting by fifteen minutes' ],
       answer:2,
       why:'Breakouts remove the senior audience and the written group answer means no individual owns the dissent. Stating your view first ends the discussion.' },
-    { q:'A US leader sets a Friday deadline for AR follow-up without explaining why. What is the cost?',
+    { q:'A leader sets a Friday deadline for AR follow-up without explaining why. What is the cost?',
       options:[ 'None, provided the deadline is clear', 'The team will miss it', 'The urgency arrives as arbitrary, producing compliance rather than genuine engagement', 'The team will escalate unnecessarily' ],
       answer:2,
       why:'Never transmit a deadline without its driver. "Friday, because the timely-filing window closes and after that the claim is unbillable" produces engagement; "Friday" produces compliance at best.' },
