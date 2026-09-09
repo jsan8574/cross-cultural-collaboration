@@ -38,6 +38,7 @@ const Store = (() => {
     flush();
     track = t;
     last = Date.now();
+    if(get(t, 'savedAt', null) === null) set(t, 'savedAt', Date.now());
   }
   function flush(){
     if(!track || last === null) return;
@@ -58,6 +59,19 @@ const Store = (() => {
     window.addEventListener('beforeunload', flush);
     setInterval(flush, 5000);
   }
+
+  /* "0m 28s" / "1h 04m" — the header clock format */
+  function fmtClock(ms){
+    const t = Math.floor(ms/1000), h = Math.floor(t/3600), m = Math.floor(t%3600/60), sec = t%60;
+    if(h) return `${h}h ${String(m).padStart(2,'0')}m`;
+    return `${m}m ${sec}s`;
+  }
+  function stamp(t){
+    const v = get(t, 'savedAt', null);
+    if(!v) return '—';
+    return new Date(v).toLocaleTimeString([], { hour:'numeric', minute:'2-digit' });
+  }
+  function touch(t){ set(t, 'savedAt', Date.now()); }
 
   function fmt(ms){
     const m = Math.floor(ms/60000);
@@ -90,7 +104,7 @@ const Store = (() => {
     if(track === t) last = Date.now();
   }
 
-  return { get, set, name, setName, bind, flush, elapsed, fmt,
+  return { get, set, name, setName, bind, flush, elapsed, fmt, fmtClock, stamp, touch,
            act, setAct, txt, setTxt, done, markDone, quiz, setQuiz, resetTrack,
            get degraded(){ return usingMem; } };
 })();

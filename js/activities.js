@@ -220,9 +220,12 @@ const Activities = (() => {
       lines();
     }
     function lines(){
-      svg.innerHTML = '';
-      if(window.innerWidth < 760) return;          // geometry is meaningless when stacked
+      if(window.innerWidth < 760){ svg.innerHTML = ''; return; }  // meaningless when stacked
       const wr = wrap.getBoundingClientRect();
+      // While the screen is hidden every rect measures zero. Leave the last good
+      // geometry in place and wait for the reflow that follows becoming visible.
+      if(wr.width < 1 || wr.height < 1) return;
+      svg.innerHTML = '';
       svg.setAttribute('viewBox', `0 0 ${wr.width} ${wr.height}`);
       Object.keys(st.pairs).forEach(l => {
         const ln = lNodes[l], rn = rNodes[st.pairs[l]];
@@ -246,6 +249,7 @@ const Activities = (() => {
     wrap.appendChild(svg); wrap.appendChild(grid);
     box.appendChild(wrap);
     paint();
+    wrap.__redraw = lines;                     // called by Activities.reflow()
     const ro = new ResizeObserver(() => lines());
     ro.observe(wrap);
     window.addEventListener('resize', lines);
@@ -542,10 +546,16 @@ const Activities = (() => {
     if(!fn){ const d = el('div'); d.textContent = `Unknown activity: ${a.kind}`; return d; }
     return fn(a);
   }
-  function countFor(mod){
+  /* trackId is explicit: the home screen counts BOTH tracks while only one can
+     be the "current" one, so this must never read the ambient TRACK. */
+  function countFor(trackId, mod){
     let total = 0, done = 0;
     (mod.blocks || []).forEach(b => {
-      if(b.type === 'activity'){ total++; if(isDone(b.activity.id)) done++; }
+      if(b.type === 'activity'){
+        total++;
+        const st = Store.act(trackId, b.activity.id);
+        if(st && st.done) done++;
+      }
     });
     return { total, done };
   }
@@ -560,5 +570,11 @@ const Activities = (() => {
     return out;
   }
 
-  return { render, isDone, countFor, summaryFor, setTrack, onChange, esc, el, TYPE };
+  /* Re-measure anything whose geometry depends on being visible. Called after a
+     screen switch, because elements laid out while hidden measure zero. */
+  function reflow(){
+    document.querySelectorAll('.mt-wrap').forEach(w => { if(w.__redraw) w.__redraw(); });
+  }
+
+  return { render, isDone, countFor, summaryFor, setTrack, onChange, reflow, esc, el, TYPE };
 })();

@@ -77,18 +77,45 @@ Two things to know:
 
 ---
 
-## Palette
+## Palette & chrome
 
-Read directly from the source `.pptx` theme XML, so it matches the deck exactly:
+Follows the the organisation course-player reference: a deep navy → teal gradient
+header, cool-only accents, white cards on a pale blue-grey ground. **No warm tones** —
+the orange and amber from the source deck are deliberately not used.
 
-`#1A2E4A` navy · `#2D3748` charcoal · `#2563A8` blue · `#0D7377` teal · `#1D7A5F` green
-`#C05C1E` orange · `#E8A838` amber · `#6B7A8D` slate · `#D0D8E4` line · `#E8EDF3` pale
+| Role | Value |
+|---|---|
+| Header gradient | `#08202E` → `#0E3448` → `#17606E` |
+| Ink / headings | `#0E2436` |
+| Body / muted | `#33485C` · `#5C7185` · `#8697A8` |
+| Teal accent | `#2E9CAB` (light `#7FC5D4`, deep `#17656F`) |
+| Mint (second accent) | `#E3F0E9` ground, `#2E7D5B` ink |
+| Page ground | `#F2F6F9` · surface `#FFFFFF` · border `#E1E9F0` |
+| Numbered squares | `#14304A` |
 
-The US track uses blue as its accent; the offshore track uses teal. Both are defined as
-CSS custom properties on `:root`, redefined for `prefers-color-scheme: dark` and again
-for `[data-theme="dark"]` so the manual toggle wins in both directions.
+The US track accents teal `#2E9CAB`; the offshore track uses the deeper `#17656F` so the
+two are distinguishable at a glance. All values are CSS custom properties on `:root`.
 
-No logo is used anywhere. The wordmark and the certificate mark are drawn in code.
+The interface is light-only, matching the reference. There is no dark mode and no theme
+toggle — if one is wanted later, redefine the tokens under
+`@media (prefers-color-scheme: dark)` and nothing else needs to change.
+
+**No logo is used anywhere**, per instruction. The header wordmark and the certificate
+mark are drawn in code (three teal bars, and two overlapping rings respectively). If the
+the organisation logo should be reinstated, drop the file into `fonts/`-adjacent
+assets and swap the inline `<svg>` in the `.brandmark` block of `index.html`.
+
+### Layout
+
+- Sticky dark header: mark · edition + course title · learner greeting · live **Active
+  time** · **Save Now** · **Switch Track**. Collapses progressively — greeting and clock
+  drop below 900px and 760px respectively.
+- Persistent left rail (296px): course progress, section list with numbered squares
+  (teal check when complete, highlighted when current), and **View Learner Record**.
+- Content column: teal `SECTION n OF m` eyebrow, large section title, `SUGGESTED` time
+  on the right, then white cards.
+- Below 1040px the rail moves above the content and **collapses behind a toggle**, so a
+  13-item nav does not push the lesson below the fold on a phone.
 
 ---
 
@@ -142,8 +169,8 @@ in-memory storage and warns the learner that progress will not persist.
 Every CSS and JS tag in `index.html` carries `?v=N`:
 
 ```html
-<link rel="stylesheet" href="css/styles.css?v=2">
-<script src="js/app.js?v=2"></script>
+<link rel="stylesheet" href="css/styles.css?v=9">
+<script src="js/app.js?v=9"></script>
 ```
 
 **Bump every `?v=` number on every edit to any CSS or JS file.** GitHub Pages caches
@@ -151,7 +178,7 @@ aggressively and a stale file is the single most common cause of "my fix isn't s
 
 ```bash
 # bump all of them at once (edit the numbers to match)
-sed -i '' 's/?v=2"/?v=3"/g' index.html
+sed -i '' 's/?v=9"/?v=10"/g' index.html
 ```
 
 If a change does not appear while testing, **confirm the browser actually loaded the new
@@ -208,6 +235,22 @@ Tested in a real browser end-to-end, including failure paths:
   matrix tables) scrolls inside its own container with no horizontal page overflow.
 - Duplicate-label audit across all 24 activities: zero duplicates.
 - Fonts verified to render as three genuinely distinct weight files, not synthesised.
+- Both home-screen track cards verified against an independent recomputation of progress.
+
+### Bugs found and fixed during QA
+
+- **Hunt activity had three valid answers.** The prompt asked for the "widest spread" and
+  accepted only hierarchy (50), but high-context and indirect disagreement were both 52.
+  Reframed to "the single highest score on the board" — 88 is a unique maximum.
+- **Cross-track progress leak.** `Activities.countFor` read the ambient current track, so
+  the home screen — which counts both tracks at once — reported one of them against the
+  other's storage. It now takes an explicit track id.
+- **Connector lines drew at zero size.** Laid out while the screen was still hidden, every
+  rect measured zero. Added `Activities.reflow()` after each screen switch plus a
+  zero-size guard that keeps the last good geometry.
+- **Class-name collision.** The header's `.tmeta.col` matched the country-column `.col`
+  rule and picked up a white card background. Renamed to `.stack`.
+- **Sequence order was not persisted until first move.** Now written on first render.
 
 ### Known items for a future pass
 

@@ -18,10 +18,10 @@ const App = (() => {
 
   /* ---------------------------------------------------------- progress */
   function moduleComplete(t, mod){
-    const acts = Activities.countFor(mod);
+    const acts = Activities.countFor(t.id, mod);
     if(acts.total > 0 && acts.done < acts.total) return false;
-    const cfu = (mod.blocks || []).filter(b => b.type === 'cfu');
-    for(const c of cfu){
+    const hasCfu = (mod.blocks || []).some(b => b.type === 'cfu');
+    if(hasCfu){
       const s = Store.get(t.id, `cfu.${mod.id}`, null);
       if(!s || !s.done) return false;
     }
@@ -36,9 +36,11 @@ const App = (() => {
     return { done, total: mods.length, pct: Math.round(doneUnits / totalUnits * 100), quiz: q };
   }
   function refreshChrome(){
-    if(!track) return;
+    if(!track){ $('#pbar').style.width = '0%'; return; }
     const p = trackProgress(track);
     $('#pbar').style.width = p.pct + '%';
+    syncHeader();
+    if(!$('#shell').hidden) renderSidebar();
   }
   Activities.onChange.push(() => { refreshChrome(); });
 
@@ -56,17 +58,17 @@ const App = (() => {
       <stop offset="100%" stop-color="var(--accent)" stop-opacity=".34"/>
     </linearGradient>
     <linearGradient id="tip" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#FFFFFF"/><stop offset="100%" stop-color="#D6E4F2"/>
+      <stop offset="0%" stop-color="#FFFFFF"/><stop offset="100%" stop-color="#D8E9EE"/>
     </linearGradient>
     <linearGradient id="mass" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#AFC7DE"/><stop offset="100%" stop-color="#6E90B4"/>
+      <stop offset="0%" stop-color="#A9C8D2"/><stop offset="100%" stop-color="#4E7E8D"/>
     </linearGradient>
   </defs>
   <rect width="800" height="132" fill="url(#sky)"/>
   <rect y="132" width="800" height="328" fill="url(#sea)"/>
-  <polygon points="400,26 330,130 470,130" fill="url(#tip)" stroke="#B9CCE0" stroke-width="1.5"/>
+  <polygon points="400,26 330,130 470,130" fill="url(#tip)" stroke="#BBD3DA" stroke-width="1.5"/>
   <polygon points="330,130 470,130 560,232 512,330 430,420 336,392 246,300 268,196"
-           fill="url(#mass)" opacity=".92" stroke="#5F82A8" stroke-width="1.5"/>
+           fill="url(#mass)" opacity=".92" stroke="#3F6C7A" stroke-width="1.5"/>
   <polygon points="400,26 400,130 330,130" fill="#FFFFFF" opacity=".55"/>
   <polygon points="400,130 470,130 560,232 400,232" fill="#FFFFFF" opacity=".1"/>
   <line x1="0" y1="132" x2="800" y2="132" stroke="var(--accent)" stroke-width="2.5" opacity=".85"/>
@@ -334,14 +336,122 @@ const App = (() => {
     return d;
   }
 
+  function sectionHead(o){
+    const h = el('div','shead');
+    const l = el('div','sh-l');
+    if(o.eyebrow) l.appendChild(el('span','eyebrow', esc(o.eyebrow)));
+    l.appendChild(el('h2', null, esc(o.title)));
+    if(o.tag) l.appendChild(el('p','tag', esc(o.tag)));
+    h.appendChild(l);
+    if(o.rValue){
+      const r = el('div','sh-r');
+      r.appendChild(el('span','eyebrow', esc(o.rLabel || '')));
+      r.appendChild(el('b', null, esc(o.rValue)));
+      h.appendChild(r);
+    }
+    return h;
+  }
+
   /* ---------------------------------------------------------- screens */
+  let currentMid = null;
+  let railCollapsed = true;      // narrow viewports only; ignored on desktop
+
   function screen(id){
-    document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id));
-    window.scrollTo({ top:0, behavior:'instant' in window ? 'instant' : 'auto' });
+    const isHome = id === 'home';
+    $('#home').classList.toggle('on', isHome);
+    $('#shell').hidden = isHome;
+    document.querySelectorAll('.content .screen').forEach(s => s.classList.toggle('on', s.id === id));
+    if(!isHome) renderSidebar();
+    window.scrollTo(0, 0);
+    // Synchronous first: display has already been applied, so geometry is valid
+    // now. The rAF is a backstop for fonts/images settling a beat later.
+    Activities.reflow();
+    requestAnimationFrame(() => Activities.reflow());
+  }
+
+  /* ------------------------------------------------------------- header */
+  function syncHeader(){
+    const on = !!track;
+    ['tdiv1','tcourse','ttime','savebtn','backhome'].forEach(id => { $('#'+id).hidden = !on; });
+    const n = Store.name().trim();
+    $('#tgreet').hidden = !(on && n);
+    $('#tdiv2').hidden  = !(on && n);
+    if(!on) return;
+    $('#tedition').textContent = track.audience;
+    $('#ttitle').textContent   = track.name;
+    if(n) $('#tname').textContent = 'Hi, ' + n.split(/\s+/)[0];
+    tickClock();
+  }
+  function tickClock(){
+    if(!track || $('#ttime').hidden) return;
+    $('#tclock').textContent = Store.fmtClock(Store.elapsed(track.id));
+  }
+
+  /* ------------------------------------------------------------ sidebar */
+  function renderSidebar(){
+    const sb = $('#sidebar');
+    if(!track){ sb.textContent = ''; return; }
+    sb.textContent = '';
+    const p = trackProgress(track);
+    const rail = el('div','rail');
+
+    const head = el('div','rail-head');
+    head.appendChild(el('span','eyebrow','Course progress'));
+    head.appendChild(el('b', null, p.pct + '% Complete'));
+    head.appendChild(el('span', null,
+      `${p.done} of ${p.total} sections · Saved ${Store.stamp(track.id)}`));
+    rail.appendChild(head);
+
+    /* On narrow viewports the full section list would push the actual content
+       far below the fold, so it collapses behind a toggle. */
+    const narrow = window.innerWidth <= 1040;
+    if(narrow && railCollapsed) rail.classList.add('collapsed');
+    const tog = el('button','rail-toggle');
+    const label = () => {
+      const cur = track.modules.findIndex(m => m.id === currentMid);
+      const name = cur >= 0 ? track.modules[cur].title
+                 : currentMid === 'check' ? 'Knowledge Check'
+                 : currentMid === 'cert'  ? 'Learner Record' : 'Course overview';
+      tog.innerHTML = `<span>${esc(name)}</span><i>${rail.classList.contains('collapsed') ? 'Show all sections ▾' : 'Hide sections ▴'}</i>`;
+    };
+    tog.addEventListener('click', () => {
+      rail.classList.toggle('collapsed');
+      railCollapsed = rail.classList.contains('collapsed');
+      label();
+    });
+    label();
+    rail.appendChild(tog);
+
+    const list = el('div','rail-list');
+    track.modules.forEach((m, i) => {
+      const done = moduleComplete(track, m);
+      const b = el('button', 'rail-item' + (done ? ' done' : '') + (currentMid === m.id ? ' on' : ''));
+      b.appendChild(el('span','rn', done ? '✓' : String(i+1)));
+      b.appendChild(el('span','rt', esc(m.title)));
+      b.addEventListener('click', () => { location.hash = `#/${track.id}/${m.id}`; });
+      list.appendChild(b);
+    });
+    const q = Store.quiz(track.id);
+    const kb = el('button', 'rail-item' + (q && q.submitted ? ' done' : '') + (currentMid === 'check' ? ' on' : ''));
+    kb.appendChild(el('span','rn', q && q.submitted ? '✓' : '★'));
+    kb.appendChild(el('span','rt','Knowledge Check'));
+    kb.addEventListener('click', () => { location.hash = `#/${track.id}/check`; });
+    list.appendChild(kb);
+    rail.appendChild(list);
+
+    rail.appendChild(el('div','rail-sep'));
+    const foot = el('div','rail-foot');
+    const rb = el('button','railbtn'); rb.textContent = 'View Learner Record';
+    rb.addEventListener('click', () => { location.hash = `#/${track.id}/cert`; });
+    foot.appendChild(rb);
+    rail.appendChild(foot);
+
+    sb.appendChild(rail);
   }
 
   function renderHome(){
-    const c = $('#home'); c.textContent = '';
+    const host = $('#home'); host.textContent = '';
+    const c = el('div','homewrap'); host.appendChild(c);
     const hero = el('div','hero');
     hero.appendChild(el('div','eyebrow','Self-paced programme'));
     hero.appendChild(el('h1', null, esc(COURSE.title)));
@@ -353,7 +463,7 @@ const App = (() => {
     nb.appendChild(el('label', null, 'Your name (for your certificate)'));
     const inp = el('input'); inp.type = 'text'; inp.placeholder = 'e.g. Alex Morgan';
     inp.value = Store.name(); inp.id = 'learnername';
-    inp.addEventListener('input', () => Store.setName(inp.value));
+    inp.addEventListener('input', () => { Store.setName(inp.value); syncHeader(); });
     nb.appendChild(inp);
     nb.appendChild(el('p','hint','Stored only in this browser. Nothing is sent anywhere.'));
     c.appendChild(nb);
@@ -387,11 +497,10 @@ const App = (() => {
     const c = $('#track'); c.textContent = '';
     const p = trackProgress(track);
 
-    const head = el('div','mhead');
-    head.appendChild(el('div','kicker', esc(track.audience)));
-    head.appendChild(el('h2', null, esc(track.name)));
-    head.appendChild(el('p','tag', esc(track.subtitle)));
-    c.appendChild(head);
+    c.appendChild(sectionHead({
+      eyebrow: track.audience, title: track.name, tag: track.subtitle,
+      rLabel: 'Total', rValue: track.modules.reduce((a,m)=>a+(m.minutes||0),0) + ' Min'
+    }));
 
     const stats = el('div','stats');
     [[`${p.done}/${p.total}`,'Modules done'], [`${p.pct}%`,'Progress'],
@@ -469,13 +578,32 @@ const App = (() => {
     const m = track.modules[i];
     const c = $('#module'); c.textContent = '';
 
-    const head = el('div','mhead');
-    head.appendChild(el('div','kicker', `Module ${i+1} of ${track.modules.length} · ${m.minutes} min`));
-    head.appendChild(el('h2', null, esc(m.title)));
-    head.appendChild(el('p','tag', esc(m.tagline)));
-    c.appendChild(head);
+    c.appendChild(sectionHead({
+      eyebrow: `Section ${i+1} of ${track.modules.length}`,
+      title: m.title, tag: m.tagline,
+      rLabel: 'Suggested', rValue: `${m.minutes} Min`
+    }));
 
-    m.blocks.forEach(b => c.appendChild(renderBlock(b, m)));
+    /* Flowing prose is grouped into white panels; anything that is already a
+       card of its own (activities, quizzes, reflections) stands alone. */
+    const STANDALONE = new Set(['activity','cfu','reflect','checklist','iceberg']);
+    let panel = null;
+    const flush = () => {
+      if(panel && panel.childNodes.length){
+        // A lone section heading reads better as a divider than as an empty card.
+        if(panel.childNodes.length === 1 && panel.firstElementChild.classList.contains('h-sub')){
+          const h = panel.firstElementChild;
+          h.classList.add('h-bare');
+          c.appendChild(h);
+        } else c.appendChild(panel);
+      }
+      panel = null;
+    };
+    m.blocks.forEach(b => {
+      if(STANDALONE.has(b.type)){ flush(); c.appendChild(renderBlock(b, m)); }
+      else { if(!panel) panel = el('div','panel'); panel.appendChild(renderBlock(b, m)); }
+    });
+    flush();
 
     const nav = el('div','mnav');
     const back = el('button','btn ghost'); back.textContent = '← All modules';
@@ -504,11 +632,11 @@ const App = (() => {
     const qs = track.knowledgeCheck;
     const st = Store.quiz(track.id) || { answers:{}, submitted:false, pct:0 };
 
-    const head = el('div','mhead');
-    head.appendChild(el('div','kicker','Graded assessment'));
-    head.appendChild(el('h2', null, 'Knowledge check'));
-    head.appendChild(el('p','tag', `${qs.length} questions · ${track.passMark}% to pass · answers are revealed after you submit`));
-    c.appendChild(head);
+    c.appendChild(sectionHead({
+      eyebrow: 'Graded assessment', title: 'Knowledge Check',
+      tag: `${qs.length} questions · ${track.passMark}% to pass · answers are revealed only after you submit`,
+      rLabel: 'Questions', rValue: String(qs.length)
+    }));
 
     if(st.submitted){ c.appendChild(results(st, qs)); screen('check'); return; }
 
@@ -642,11 +770,11 @@ const App = (() => {
   /* ------------------------------------------------------- certificate */
   function renderCert(){
     const c = $('#cert'); c.textContent = '';
-    const head = el('div','mhead');
-    head.appendChild(el('div','kicker','Completion'));
-    head.appendChild(el('h2', null, 'Certificate & export'));
-    head.appendChild(el('p','tag','Your certificate, and a PDF of everything you wrote'));
-    c.appendChild(head);
+    c.appendChild(sectionHead({
+      eyebrow: 'Completion', title: 'Learner Record',
+      tag: 'Your certificate, and a PDF of everything you wrote',
+      rLabel: 'Time invested', rValue: Store.fmt(Store.elapsed(track.id))
+    }));
 
     const q = Store.quiz(track.id);
     const p = trackProgress(track);
@@ -706,44 +834,39 @@ const App = (() => {
   function route(){
     const h = (location.hash || '#/').replace(/^#\/?/, '');
     const parts = h.split('/').filter(Boolean);
-    const bc = $('#backhome');
 
     if(!parts.length){
-      track = null;
+      track = null; currentMid = null;
       document.body.removeAttribute('data-track');
-      bc.style.display = 'none';
       $('#pbar').style.width = '0%';
+      syncHeader();
       renderHome(); return;
     }
     track = trackById(parts[0]);
     document.body.dataset.track = track.id;
     Activities.setTrack(track.id);
     Store.bind(track.id);
-    bc.style.display = '';
-    refreshChrome();
+    currentMid = parts[1] || null;
+    railCollapsed = true;
+    syncHeader();
 
-    if(parts.length === 1){ renderTrack(); return; }
-    if(parts[1] === 'check'){ renderCheck(); return; }
-    if(parts[1] === 'cert'){ renderCert(); return; }
-    renderModule(parts[1]);
+    if(parts.length === 1){ renderTrack(); }
+    else if(parts[1] === 'check'){ renderCheck(); }
+    else if(parts[1] === 'cert'){ renderCert(); }
+    else renderModule(parts[1]);
+    refreshChrome();
   }
 
   /* -------------------------------------------------------------- init */
   function init(){
-    // theme toggle
-    const tk = 'ccl.theme';
-    let theme = null;
-    try{ theme = localStorage.getItem(tk); }catch(e){}
-    if(theme) document.documentElement.setAttribute('data-theme', theme);
-    $('#themebtn').addEventListener('click', () => {
-      const cur = document.documentElement.getAttribute('data-theme');
-      const isDark = cur ? cur === 'dark'
-        : window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const next = isDark ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      try{ localStorage.setItem(tk, next); }catch(e){}
-    });
     $('#backhome').addEventListener('click', () => { location.hash = '#/'; });
+    $('#savebtn').addEventListener('click', () => {
+      if(!track) return;
+      Store.flush();
+      Store.touch(track.id);
+      renderSidebar();
+      toast('Progress saved');
+    });
 
     window.addEventListener('hashchange', route);
     route();
@@ -751,9 +874,8 @@ const App = (() => {
     if(Store.degraded){
       setTimeout(() => toast('Browser storage is unavailable — progress will not persist'), 900);
     }
-    setInterval(() => {
-      if(track && $('#track').classList.contains('on')) refreshChrome();
-    }, 30000);
+    setInterval(tickClock, 1000);
+    setInterval(() => { if(track) Store.touch(track.id); }, 60000);
   }
 
   return { init, toast };

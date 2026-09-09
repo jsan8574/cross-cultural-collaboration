@@ -2,10 +2,12 @@
 
 const Certificate = (() => {
 
-  const PAL = { navy:'#1A2E4A', ink:'#2D3748', slate:'#6B7A8D', line:'#D0D8E4',
-                pale:'#E8EDF3', blue:'#2563A8', teal:'#0D7377', amber:'#E8A838', green:'#1D7A5F' };
+  /* Matches the course-player chrome: deep navy + teal, mint as the second
+     accent. No warm tones anywhere. */
+  const PAL = { navy:'#0E2436', ink:'#33485C', slate:'#5C7185', line:'#E1E9F0',
+                pale:'#F2F6F9', teal:'#2E9CAB', tealD:'#17656F', mint:'#2E7D5B' };
 
-  function accent(track){ return track.accent === 'teal' ? PAL.teal : PAL.blue; }
+  function accent(track){ return track.accent === 'teal' ? PAL.tealD : PAL.teal; }
 
   /* Proxima Nova is loaded via @font-face; canvas needs it resolved before drawing. */
   async function ready(){
@@ -35,7 +37,7 @@ const Certificate = (() => {
 
       // corner wash
       const g = x.createLinearGradient(0,0,W,H);
-      g.addColorStop(0, A + '10'); g.addColorStop(.5,'#FFFFFF00'); g.addColorStop(1, PAL.amber + '10');
+      g.addColorStop(0, A + '14'); g.addColorStop(.5,'#FFFFFF00'); g.addColorStop(1, PAL.mint + '12');
       x.fillStyle = g; x.fillRect(0,0,W,H);
 
       // frame
@@ -51,7 +53,7 @@ const Certificate = (() => {
       const cx = W/2, my = 138;
       x.strokeStyle = A; x.lineWidth = 3.5;
       x.beginPath(); x.arc(cx, my, 30, 0, Math.PI*2); x.stroke();
-      x.strokeStyle = PAL.amber; x.lineWidth = 3.5;
+      x.strokeStyle = PAL.mint; x.lineWidth = 3.5;
       x.beginPath(); x.arc(cx + 22, my, 30, 0, Math.PI*2); x.stroke();
       x.strokeStyle = PAL.slate; x.lineWidth = 1.5;
       x.beginPath(); x.moveTo(cx - 96, my); x.lineTo(cx - 46, my); x.stroke();
@@ -215,7 +217,7 @@ const Certificate = (() => {
     let y = 0;
 
     const rgb = h => [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
-    const A = rgb(track.accent === 'teal' ? PAL.teal : PAL.blue);
+    const A = rgb(track.accent === 'teal' ? PAL.tealD : PAL.teal);
     const NAVY = rgb(PAL.navy), SLATE = rgb(PAL.slate), INK = rgb(PAL.ink);
 
     function page(first){
@@ -285,7 +287,7 @@ const Certificate = (() => {
         doc.setFont('helvetica','bold'); doc.setTextColor(...NAVY);
         lines.forEach(l => { doc.text(l, M, y); y += 13; });
         doc.setFont('helvetica','normal');
-        doc.setTextColor(ok ? 29 : 192, ok ? 122 : 57, ok ? 95 : 43);
+        doc.setTextColor(ok ? 46 : 180, ok ? 125 : 69, ok ? 91 : 60);
         ans.forEach(l => { doc.text(l, M + 14, y); y += 13; });
         y += 8;
       });
