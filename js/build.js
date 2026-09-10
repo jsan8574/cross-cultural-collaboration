@@ -176,7 +176,7 @@ const Build = (() => {
 
       { type:'activity', activity:{
         kind:'flip', id:`p-${t.id}-people`,
-        title:`Two colleagues in ${t.name}`,
+        title:`Two colleagues in ${t.the}`,
         instructions:'Turn each card. The back holds the part that changes how you work with them.',
         cards: t.people,
         key:{ title:'Coaching Key Points', points:[
@@ -184,7 +184,7 @@ const Build = (() => {
           'Read these as capability profiles, not hardship profiles — each names a strength you are probably under-using.',
           `${t.work === 'hybrid' ? `${t.name} is the hybrid centre: colleagues may be together in a room, so consensus often forms before your call rather than during it.` : `${t.name} works fully remote, so the informal corridor conversation that would surface a concern simply does not exist.`}` ] } } },
 
-      { type:'h', text:`How ${t.name} communicates` },
+      { type:'h', text:`How ${t.the} communicates` },
       { type:'columns', cols:[
         { flag:t.flag, title:'Norms', items:t.norms },
         { flag:'⚖', title:'Hierarchy & decisions', items:t.hierarchy },
@@ -212,7 +212,7 @@ const Build = (() => {
       { type:'callout', variant:'insight', title:'One action',
         text:`Map these dates against your billing deadlines and claims submission windows now, before one of them creates a surprise. Sharing a combined calendar in your team channel takes ten minutes.` },
 
-      { type:'h', text:`${t.name} is not one thing` },
+      { type:'h', text:`${t.the} is not one thing` },
       { type:'callout', variant:'warn', title:t.diversity.headline, text:t.diversity.text },
       { type:'p', text:t.diversity.coach },
 
@@ -241,7 +241,7 @@ const Build = (() => {
     ];
 
     return { id:`pack-${t.id}`, stage:'core', minutes:14,
-      title:`Working with ${t.name}`, tagline:t.headline, blocks, pack:t.id };
+      title:`Working with ${t.the}`, tagline:t.headline, blocks, pack:t.id };
   }
 
   /* ═════════════════════════════════════════ CORE 3 — reading the unsaid */

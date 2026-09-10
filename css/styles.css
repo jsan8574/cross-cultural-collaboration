@@ -132,6 +132,24 @@ img{max-width:100%}
 .railbtn:hover{border-color:var(--teal);color:var(--teal-d)}
 .rail-sep{height:1px;background:var(--border-2)}
 
+/* ----------------------------------------------- course overview list */
+.mlist{display:flex;flex-direction:column;gap:9px;margin-bottom:6px}
+.mcard{display:flex;align-items:center;gap:15px;width:100%;text-align:left;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:15px 18px;cursor:pointer;transition:.16s;box-shadow:var(--shadow)}
+.mcard:hover{border-color:var(--teal);transform:translateX(3px);box-shadow:var(--shadow-lg)}
+.mcard .mnum{width:34px;height:34px;border-radius:8px;background:var(--navy-2);color:#fff;
+  flex-shrink:0;display:grid;place-items:center;font-weight:700;font-size:13.5px}
+.mcard.done .mnum{background:var(--teal-d)}
+.mcard .mt{flex:1;min-width:0}
+.mcard .mt b{display:block;font-weight:700;color:var(--ink);font-size:16px;letter-spacing:-.012em;
+  margin-bottom:2px}
+.mcard .mt span{display:block;font-size:13.5px;color:var(--ink-4);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mcard .mm{font-size:12.5px;color:var(--ink-4);font-weight:700;flex-shrink:0;
+  background:var(--surface-3);padding:5px 11px;border-radius:99px;white-space:nowrap}
+.mcard.done .mm{background:var(--mint);color:var(--mint-ink)}
+
 /* --------------------------------------------------------- section head */
 .shead{display:flex;align-items:flex-start;gap:24px;padding:4px 0 22px}
 .shead .sh-l{flex:1;min-width:0}
@@ -577,6 +595,9 @@ table.dims td.me .dbar i{background:var(--teal-dd);opacity:1}
   .qopts{padding-left:0}
   .qwhy{margin-left:0}
   .rail-list{grid-template-columns:1fr}
+  .mcard{gap:12px;padding:13px 14px;align-items:flex-start}
+  .mcard .mt span{white-space:normal}
+  .mcard .mm{align-self:center}
   .mnav{flex-wrap:wrap}
   .mnav .btn{flex:1;min-width:7rem;text-align:center}
   .hero{padding:38px 0 20px}
