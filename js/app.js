@@ -507,7 +507,7 @@ const App = (() => {
     const hero = el('div','hero');
     hero.appendChild(el('div','eyebrow','Self-paced programme'));
     hero.appendChild(el('h1', null, 'Cross-Cultural Collaboration'));
-    hero.appendChild(el('p','sub', 'Working well across the four the organisation centres — no one of them is the standard the others are measured against.'));
+    hero.appendChild(el('p','sub', 'For managers and senior leaders working across the four the organisation centres — no one of them is the standard the others are measured against.'));
     c.appendChild(hero);
 
     /* ---- overview ---- */
@@ -515,8 +515,8 @@ const App = (() => {
     ov.appendChild(el('span','eyebrow ovlabel','About this programme'));
     const grid = el('div','ovgrid');
     [
-      ['What it is',
-       'A self-paced course on working well across the four delivery centres — the United States, the Philippines, India and Sri Lanka. It covers the same ground as the facilitated workshop, restructured so you can work through it alone and return to it.'],
+      ['Who it is for',
+       'Managers and senior leaders in any of the four delivery centres — the United States, the Philippines, India and Sri Lanka — who lead or collaborate with teams in another. It assumes you have a team, run calls, give feedback and make commitments on their behalf.'],
       ['Why it exists',
        'Most cross-cultural friction is not a performance problem. It is two groups running different but internally coherent assumptions about how to disagree, how to escalate, how to recognise good work and what silence means. This builds the translation layer between them.'],
       ['It is built around you',
