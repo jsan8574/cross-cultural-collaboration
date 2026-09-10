@@ -134,24 +134,54 @@ const Build = (() => {
           'Everything hidden is learned only through relationship, and all of it will.',
           'The habit: when a behaviour puzzles you, resist the first interpretation and ask what sits below it.',
           'The assumption feels like a fact until you examine it.' ] } } },
-      { type:'h', text:'Where the four sit' },
-      { type:'p', text:'Tendency scores, not individuals — and no reference point. Every culture sits somewhere on every scale, including your own. What matters is the distance between any two positions, because that distance is where translation is needed.' },
-      dimRow(you, them),
-      { type:'callout', variant:'insight', title:'Read it in both directions',
-        text:`Your own row is on this chart too. A colleague low on hierarchy looks disrespectful of seniority from a high vantage point, exactly as a colleague high on it looks passive from a low one. Neither reading is generous, and neither is correct.` }
+      { type:'h', text:'Where you and your counterparts sit' },
+      { type:'p', text:'Five dimensions that decide how work actually gets done. Each runs 0 to 100 between two opposite habits — neither end is better, and every culture sits somewhere on all five, including yours.' },
+      { type:'callout', variant:'insight', title:'Why this chart is in the course',
+        text:'Cultural awareness stays vague until you can point at something. This turns "we work differently" into a specific, measured distance on a named dimension — which is the difference between knowing there may be friction and knowing exactly where to spend your attention on Monday.' },
+      dimRow(you, them)
     ];
 
-    /* Find this learner's widest genuine gap and make it the hunt target. */
-    let best = { dim:null, other:null, v:-1 };
-    Object.keys(you.dims).forEach(d => them.forEach(t => {
-      const v = Math.abs(you.dims[d] - t.dims[d]);
-      if(v > best.v) best = { dim:d, other:t, v };
-    }));
+    /* Rank every dimension by this learner's largest gap to any counterpart. */
     const DIMNAME = { context:'High-context communication', collectivism:'Collectivism',
       hierarchy:'Respect for hierarchy', indirect:'Indirect disagreement', relationship:'Relationship before task' };
+    const MEANS = {
+      context:      'how much meaning travels in the words versus around them',
+      collectivism: 'whether recognition and accountability land on a person or a group',
+      hierarchy:    'how much distance sits between a person and the authority above them',
+      indirect:     'how openly disagreement gets put on the table',
+      relationship: 'whether warmth comes before business or after it' };
+    const ACT = {
+      context:      'Ask for specifics rather than confirmation. "Which field, and how many?" beats "is this on track?"',
+      collectivism: 'Decide deliberately whether praise lands on the team or the person — the wrong choice creates friction either way.',
+      hierarchy:    'Put delegated authority in writing. Where the gap is wide, "just go ahead" is not permission anyone can act on.',
+      indirect:     'Treat every hedge as a flag and follow it. Where the gap is wide, the flag is the only warning you will get.',
+      relationship: 'Budget the first five minutes of every call for the relationship, or accept that bad news will reach you late.' };
 
-    blocks.push({ type:'callout', variant:'rcm', title:'Your widest gap',
-      text:`Between ${you.the} and ${best.other.the}, the largest distance is on ${DIMNAME[best.dim].toLowerCase()} — ${you.dims[best.dim]} against ${best.other.dims[best.dim]}, a ${best.v}-point gap. That is the single dimension most likely to generate misreads in your particular working relationship, and it is worth remembering when something puzzles you.` });
+    const ranked = Object.keys(you.dims).map(d => {
+      let worst = { other:null, v:-1 };
+      them.forEach(t => {
+        const v = Math.abs(you.dims[d] - t.dims[d]);
+        if(v > worst.v) worst = { other:t, v };
+      });
+      return { dim:d, other:worst.other, v:worst.v };
+    }).sort((a,b) => b.v - a.v);
+
+    const widest = ranked[0], closest = ranked[ranked.length - 1];
+    const band = v => v >= 30 ? 'wide' : v >= 15 ? 'noticeable' : 'close';
+
+    blocks.push({ type:'gaps', rows: ranked.map(r => ({
+      dim: r.dim, label: DIMNAME[r.dim], means: MEANS[r.dim], act: ACT[r.dim],
+      you: you.dims[r.dim], them: r.other.dims[r.dim],
+      otherName: r.other.name, otherFlag: r.other.flag, gap: r.v, band: band(r.v) })) });
+
+    const allClose = widest.v < 20;
+    blocks.push({ type:'callout', variant:'rcm', title:'What to do with this',
+      text: allClose
+        ? `Nothing on this chart is far apart. Your widest gap is only ${widest.v} points, on ${DIMNAME[widest.dim].toLowerCase()}. Read that as a warning rather than a reassurance: you and ${listNames(them)} share most of the same instincts, so you will assume you understand each other and neither side will check. Large gaps announce themselves and get managed. Gaps this size do not — they surface late, as a surprise, usually as a missed commitment nobody thought needed confirming. Your work is to check the things that feel too obvious to check.`
+        : `Your widest gap is ${DIMNAME[widest.dim].toLowerCase()} — ${you.dims[widest.dim]} against ${widest.other.dims[widest.dim]} in ${widest.other.the}, a ${widest.v}-point distance. That is where to spend deliberate effort. Your closest is ${DIMNAME[closest.dim].toLowerCase()}, at ${closest.v} points — and closeness is its own trap, because you will both assume you understand each other and neither of you will check.` });
+
+    blocks.push({ type:'callout', variant:'insight', title:'Read it in both directions',
+      text:'Your own row is on this chart too, which is the whole point of including it. A colleague lower on hierarchy looks disrespectful of seniority from a high vantage point, exactly as a colleague higher on it looks passive from a low one. Neither reading is generous, and neither is correct — they are two positions on one scale, and you are standing on it as well.' });
 
     blocks.push({ type:'cfu', questions:[
       { q:'Your counterparts never disagree with you in a group call. Using the iceberg, what is the useful first question?',

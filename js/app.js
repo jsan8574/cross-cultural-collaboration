@@ -98,8 +98,13 @@ const App = (() => {
 
   const DIMLABEL = { context:'High-context communication', collectivism:'Collectivism',
     hierarchy:'Respect for hierarchy', indirect:'Indirect disagreement', relationship:'Relationship before task' };
-  const DIMSUB = { context:'Meaning implied rather than stated', collectivism:'Group harmony over individual goals',
-    hierarchy:'Authority distance at work', indirect:'How openly conflict is surfaced', relationship:'Warmth before business' };
+  /* Both ends of every scale, so a number means something on sight. */
+  const DIMPOLE = {
+    context:      ['0 — meaning is in the words',      '100 — meaning is in the context'],
+    collectivism: ['0 — the individual is the unit',   '100 — the group is the unit'],
+    hierarchy:    ['0 — flat, challenge upward',       '100 — authority distance is respected'],
+    indirect:     ['0 — disagreement said outright',   '100 — disagreement implied'],
+    relationship: ['0 — task first',                   '100 — relationship first'] };
 
   /* Four cultures as peers. The learner's own row is marked "you" — not as the
      baseline, just so they can find themselves on the chart. */
@@ -122,7 +127,10 @@ const App = (() => {
       const tr = el('tr');
       const td0 = el('td');
       td0.appendChild(el('b', null, esc(DIMLABEL[d])));
-      td0.appendChild(el('span', null, esc(DIMSUB[d])));
+      const sc = el('div','dscale');
+      sc.appendChild(el('i', null, esc(DIMPOLE[d][0])));
+      sc.appendChild(el('i', null, esc(DIMPOLE[d][1])));
+      td0.appendChild(sc);
       tr.appendChild(td0);
       shown.forEach(id => {
         const v = CULTURES[id].dims[d];
@@ -138,6 +146,36 @@ const App = (() => {
     return w;
   }
 
+  /* Each dimension's distance, ranked, with what that distance means in practice.
+     The number alone is inert; the band and the action are what a learner uses. */
+  const BANDCOPY = {
+    wide:       ['Wide gap',       'Translate deliberately. Assume nothing carries across unaided.'],
+    noticeable: ['Noticeable gap', 'Expect occasional misreads. Check rather than assume.'],
+    close:      ['Close',          'The dangerous one — you will both assume you understand each other.'] };
+
+  function gapsList(b){
+    const wrap = el('div','gaps');
+    wrap.appendChild(el('div','eyebrow gapshead','Your gaps, largest first'));
+    b.rows.forEach(r => {
+      const row = el('div', 'gaprow ' + r.band);
+      const head = el('div','gaphead');
+      head.appendChild(el('b', null, esc(r.label)));
+      const chip = el('span', 'gapchip ' + r.band);
+      chip.textContent = `${r.gap} pts · ${BANDCOPY[r.band][0]}`;
+      head.appendChild(chip);
+      row.appendChild(head);
+      row.appendChild(el('div','gapnums',
+        `You ${r.you} <span>vs</span> ${esc(r.otherFlag)} ${esc(r.otherName)} ${r.them}`));
+      row.appendChild(el('p','gapmeans', 'This measures ' + esc(r.means) + '.'));
+      const act = el('p','gapact');
+      act.appendChild(el('b', null, BANDCOPY[r.band][1] + ' '));
+      act.appendChild(el('span', null, esc(r.act)));
+      row.appendChild(act);
+      wrap.appendChild(row);
+    });
+    return wrap;
+  }
+
   /* ------------------------------------------------------------ blocks */
   function renderBlock(b, mod){
     switch(b.type){
@@ -150,6 +188,7 @@ const App = (() => {
       case 'quote':   return el('div','bq', esc(b.text));
       case 'iceberg': return iceberg();
       case 'dims':    return dimsGrid(b);
+      case 'gaps':    return gapsList(b);
       case 'callout': {
         const d = el('div', 'callout ' + (b.variant || 'insight'));
         d.appendChild(el('h4', null, esc(b.title)));

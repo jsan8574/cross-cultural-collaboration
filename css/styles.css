@@ -515,6 +515,32 @@ table.dims tr:last-child td{border-bottom:none}
 table.dims td:first-child{text-align:left}
 table.dims td:first-child b{display:block;font-size:14.5px;color:var(--ink)}
 table.dims td:first-child span{font-size:12.5px;color:var(--ink-4)}
+/* Both ends of the scale, so a bare number is readable on sight */
+.dscale{display:flex;justify-content:space-between;gap:12px;margin-top:5px;
+  border-top:1px dashed var(--border);padding-top:5px}
+.dscale i{font-style:normal;font-size:10.5px;color:var(--ink-4);line-height:1.3}
+.dscale i:last-child{text-align:right}
+
+/* ranked gap analysis */
+.gaps{margin:0 0 18px}
+.gapshead{color:var(--teal-d);display:block;margin-bottom:11px}
+.gaprow{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--border);
+  border-radius:var(--r-sm);padding:15px 18px;margin-bottom:9px;box-shadow:var(--shadow)}
+.gaprow.wide{border-left-color:var(--teal-dd)}
+.gaprow.noticeable{border-left-color:var(--teal)}
+.gaprow.close{border-left-color:var(--mint-ink)}
+.gaphead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:4px}
+.gaphead b{font-size:16px;color:var(--ink);letter-spacing:-.012em}
+.gapchip{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  padding:4px 10px;border-radius:99px;white-space:nowrap}
+.gapchip.wide{background:var(--accent-soft);color:var(--teal-dd)}
+.gapchip.noticeable{background:var(--surface-3);color:var(--ink-3)}
+.gapchip.close{background:var(--mint);color:var(--mint-ink)}
+.gapnums{font-size:14px;color:var(--ink-2);font-weight:600;font-variant-numeric:tabular-nums;margin-bottom:7px}
+.gapnums span{color:var(--ink-4);font-weight:400;padding:0 4px}
+.gapmeans{font-size:13.5px;color:var(--ink-4);margin:0 0 7px}
+.gapact{font-size:14px;color:var(--ink-2);margin:0}
+.gapact b{color:var(--ink)}
 table.dims td.me{background:var(--accent-soft)}
 table.dims .dv{font-size:16px;font-weight:700;color:var(--ink);display:block}
 table.dims .dbar{height:4px;border-radius:99px;background:var(--border);margin-top:6px;overflow:hidden}
@@ -599,6 +625,8 @@ table.dims td.me .dbar i{background:var(--teal-dd);opacity:1}
   .qopts{padding-left:0}
   .qwhy{margin-left:0}
   .rail-list{grid-template-columns:1fr}
+  .dscale{flex-direction:column;gap:2px}
+  .dscale i:last-child{text-align:left}
   .mcard{gap:12px;padding:13px 14px;align-items:flex-start}
   .mcard .mt span{white-space:normal}
   .mcard .mm{align-self:center}
