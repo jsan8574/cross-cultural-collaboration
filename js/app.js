@@ -508,7 +508,7 @@ const App = (() => {
     const hero = el('div','hero');
     hero.appendChild(el('div','eyebrow','Self-paced programme'));
     hero.appendChild(el('h1', null, 'Cross-Cultural Collaboration'));
-    hero.appendChild(el('p','sub', 'For managers and senior leaders working across the four the organisation centres — no one of them is the standard the others are measured against.'));
+    hero.appendChild(el('p','sub', 'For managers and senior leaders working across four delivery centres — no one of them is the standard the others are measured against.'));
     c.appendChild(hero);
 
     /* ---- overview ---- */

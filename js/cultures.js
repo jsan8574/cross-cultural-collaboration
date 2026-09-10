@@ -1,4 +1,4 @@
-/* The four the organisation delivery centres, as PEERS.
+/* The four delivery centres, as PEERS.
    Every culture carries the same fields at the same depth — dimension scores,
    communication signals, feedback norms, hierarchy, teamwork concept, calendar,
    internal diversity, two composite people, RCM patterns, how it gets misread,
@@ -392,7 +392,7 @@ lk: {
 
   diversity:{
     headline:'Sinhalese, Tamil and Muslim communities, and a recent war',
-    text:'The 26-year civil war ended in 2009, within living memory for every colleague. The three communities have distinct languages, observances and family histories, and the Northern and Eastern Provinces have different post-war trajectories from Colombo. The 2022 economic crisis affected households very unevenly. This is also the largest the organisation centre and the most internally varied.',
+    text:'The 26-year civil war ended in 2009, within living memory for every colleague. The three communities have distinct languages, observances and family histories, and the Northern and Eastern Provinces have different post-war trajectories from Colombo. The 2022 economic crisis affected households very unevenly. It is also a large and internally varied centre.',
     coach:'Do not raise the war as a topic of curiosity, and do not assume shared views. Use the multi-faith calendar rather than only the Buddhist one, and let people volunteer their own background.' },
 
   people:[

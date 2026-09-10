@@ -11,7 +11,7 @@ coaching language and RCM consequences behind every "Coaching Key Points" callou
 
 ## No culture is the baseline
 
-The four the organisation delivery centres — **United States, Philippines, India,
+The four delivery centres — **United States, Philippines, India,
 Sri Lanka** — are modelled as peers in `js/cultures.js`. Every one carries the same
 fields at the same depth: dimension scores, communication signals, feedback norms,
 hierarchy, a teamwork concept, working calendar, internal diversity, **two composite
@@ -126,7 +126,7 @@ Two things to know:
 
 ## Palette & chrome
 
-Follows the the organisation course-player reference: a deep navy → teal gradient
+Follows the supplied course-player reference: a deep navy → teal gradient
 header, cool-only accents, white cards on a pale blue-grey ground. **No warm tones** —
 the orange and amber from the source deck are deliberately not used.
 
