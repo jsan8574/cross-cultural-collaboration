@@ -476,8 +476,9 @@ const App = (() => {
     track.modules.forEach((m, i) => {
       const done = moduleComplete(track, m);
       const b = el('button', 'rail-item' + (done ? ' done' : '') + (currentMid === m.id ? ' on' : ''));
-      b.appendChild(el('span','rn', done ? '✓' : String(i+1)));
+      b.appendChild(el('span','rn', String(i+1)));
       b.appendChild(el('span','rt', esc(m.title)));
+      if(done) b.appendChild(el('span','rdone','✓'));
       b.addEventListener('click', () => { location.hash = `#/course/${m.id}`; });
       list.appendChild(b);
     });
@@ -659,7 +660,7 @@ const App = (() => {
         const i = track.modules.indexOf(m);
         const done = moduleComplete(track, m);
         const card = el('button', 'mcard' + (done ? ' done' : ''));
-        card.appendChild(el('div','mnum', done ? '✓' : String(i+1)));
+        card.appendChild(el('div','mnum', String(i+1)));
         const t = el('div','mt');
         t.appendChild(el('b', null, esc(m.title)));
         t.appendChild(el('span', null, esc(m.tagline)));
@@ -685,7 +686,7 @@ const App = (() => {
     list.appendChild(kc);
 
     const cc = el('button','mcard');
-    cc.appendChild(el('div','mnum','🏅'));
+    cc.appendChild(el('div','mnum','✦'));
     const ct = el('div','mt');
     ct.appendChild(el('b', null, 'Certificate & export'));
     ct.appendChild(el('span', null, 'Download your certificate and a PDF of your answers'));
