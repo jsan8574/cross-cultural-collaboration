@@ -41,7 +41,8 @@
   --maxw:1220px; --rail:296px; --bar:74px;
   --font:'Proxima Nova',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
 }
-[data-track="us"]{ --accent:var(--teal-dd); --accent-d:#124E57; --accent-soft:#E4F1F2; }
+/* One accent for everyone. Per-culture tinting would imply a hierarchy of
+   cultures, which is exactly what this course is built to avoid. */
 
 /* ---------------------------------------------------------------- base */
 *,*::before,*::after{box-sizing:border-box}
@@ -471,6 +472,32 @@ table.mx td:first-child{font-weight:600;color:var(--ink)}
 .pchip.on{background:var(--teal-d);border-color:var(--teal-d);color:#fff}
 .pchip.on::before{content:'✓ ';font-weight:700}
 .recline{font-size:13.5px;color:var(--ink-3);margin:-6px 0 14px}
+.pchip:disabled,.pchip.self{opacity:.45;cursor:default;background:var(--surface-3)}
+.pchip:disabled:hover{border-color:var(--border)}
+.emptystate{text-align:center;color:var(--ink-4);font-style:italic}
+.emptystate p{margin:0}
+.coursecard{width:100%}
+.fairnote{font-size:13px;color:var(--ink-4);margin:14px 2px 0;text-align:center}
+
+/* four-culture dimension grid — peers, no baseline column */
+.dimswrap{overflow-x:auto;margin:0 0 18px;border:1px solid var(--border);
+  border-radius:var(--r);background:var(--surface);box-shadow:var(--shadow)}
+table.dims{border-collapse:collapse;width:100%;min-width:560px}
+table.dims th{padding:14px 12px;text-align:center;color:var(--ink-4);border-bottom:1px solid var(--border);
+  font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;white-space:nowrap}
+table.dims th:first-child{text-align:left;width:36%}
+table.dims th.me{color:var(--teal-dd);background:var(--accent-soft)}
+table.dims th.me i{display:block;font-style:normal;font-size:9px;letter-spacing:.14em;opacity:.85}
+table.dims td{padding:12px;border-bottom:1px solid var(--border-2);text-align:center;vertical-align:middle}
+table.dims tr:last-child td{border-bottom:none}
+table.dims td:first-child{text-align:left}
+table.dims td:first-child b{display:block;font-size:14.5px;color:var(--ink)}
+table.dims td:first-child span{font-size:12.5px;color:var(--ink-4)}
+table.dims td.me{background:var(--accent-soft)}
+table.dims .dv{font-size:16px;font-weight:700;color:var(--ink);display:block}
+table.dims .dbar{height:4px;border-radius:99px;background:var(--border);margin-top:6px;overflow:hidden}
+table.dims .dbar i{display:block;height:100%;background:var(--teal);opacity:.75}
+table.dims td.me .dbar i{background:var(--teal-dd);opacity:1}
 
 .seclabel{color:var(--ink-4);margin:40px 0 14px;display:flex;align-items:center;gap:12px}
 .seclabel::after{content:'';flex:1;height:1px;background:var(--border)}

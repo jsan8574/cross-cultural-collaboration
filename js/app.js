@@ -5,7 +5,14 @@ const App = (() => {
   const $ = s => document.querySelector(s);
   let track = null;
 
-  const trackById = id => COURSE.tracks.find(t => t.id === id) || COURSE.tracks[0];
+  /* The course is generated from the learner's context, not looked up. */
+  function activeCourse(){
+    const pr = Store.profile();
+    const them = (pr.works || []).filter(id => id !== pr.base);
+    if(!pr.base || !them.length) return null;
+    return Build.buildCourse(pr.base, them);
+  }
+  function contextReady(){ const c = activeCourse(); return !!c; }
 
   /* ------------------------------------------------------------- toast */
   let toastT;
@@ -89,6 +96,48 @@ const App = (() => {
     return w;
   }
 
+  const DIMLABEL = { context:'High-context communication', collectivism:'Collectivism',
+    hierarchy:'Respect for hierarchy', indirect:'Indirect disagreement', relationship:'Relationship before task' };
+  const DIMSUB = { context:'Meaning implied rather than stated', collectivism:'Group harmony over individual goals',
+    hierarchy:'Authority distance at work', indirect:'How openly conflict is surfaced', relationship:'Warmth before business' };
+
+  /* Four cultures as peers. The learner's own row is marked "you" — not as the
+     baseline, just so they can find themselves on the chart. */
+  function dimsGrid(b){
+    const order = ['us','ph','in','lk'];
+    const shown = order.filter(id => id === b.you || b.them.includes(id));
+    const w = el('div','dimswrap');
+    const tbl = el('table','dims');
+    const thead = el('thead'), hr = el('tr');
+    hr.appendChild(el('th', null, 'Dimension'));
+    shown.forEach(id => {
+      const c = CULTURES[id];
+      const th = el('th', id === b.you ? 'me' : null,
+        `${c.flag} ${esc(c.short)}${id === b.you ? '<i>you</i>' : ''}`);
+      hr.appendChild(th);
+    });
+    thead.appendChild(hr); tbl.appendChild(thead);
+    const tb = el('tbody');
+    Object.keys(DIMLABEL).forEach(d => {
+      const tr = el('tr');
+      const td0 = el('td');
+      td0.appendChild(el('b', null, esc(DIMLABEL[d])));
+      td0.appendChild(el('span', null, esc(DIMSUB[d])));
+      tr.appendChild(td0);
+      shown.forEach(id => {
+        const v = CULTURES[id].dims[d];
+        const td = el('td', id === b.you ? 'me' : null);
+        td.appendChild(el('b','dv', String(v)));
+        const bar = el('div','dbar'); const i = el('i');
+        i.style.width = v + '%'; bar.appendChild(i); td.appendChild(bar);
+        tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    });
+    tbl.appendChild(tb); w.appendChild(tbl);
+    return w;
+  }
+
   /* ------------------------------------------------------------ blocks */
   function renderBlock(b, mod){
     switch(b.type){
@@ -100,6 +149,7 @@ const App = (() => {
       case 'smenote': return el('div','smenote', esc(b.text));
       case 'quote':   return el('div','bq', esc(b.text));
       case 'iceberg': return iceberg();
+      case 'dims':    return dimsGrid(b);
       case 'callout': {
         const d = el('div', 'callout ' + (b.variant || 'insight'));
         d.appendChild(el('h4', null, esc(b.title)));
@@ -428,21 +478,21 @@ const App = (() => {
       const b = el('button', 'rail-item' + (done ? ' done' : '') + (currentMid === m.id ? ' on' : ''));
       b.appendChild(el('span','rn', done ? '✓' : String(i+1)));
       b.appendChild(el('span','rt', esc(m.title)));
-      b.addEventListener('click', () => { location.hash = `#/${track.id}/${m.id}`; });
+      b.addEventListener('click', () => { location.hash = `#/course/${m.id}`; });
       list.appendChild(b);
     });
     const q = Store.quiz(track.id);
     const kb = el('button', 'rail-item' + (q && q.submitted ? ' done' : '') + (currentMid === 'check' ? ' on' : ''));
     kb.appendChild(el('span','rn', q && q.submitted ? '✓' : '★'));
     kb.appendChild(el('span','rt','Knowledge Check'));
-    kb.addEventListener('click', () => { location.hash = `#/${track.id}/check`; });
+    kb.addEventListener('click', () => { location.hash = '#/course/check'; });
     list.appendChild(kb);
     rail.appendChild(list);
 
     rail.appendChild(el('div','rail-sep'));
     const foot = el('div','rail-foot');
     const rb = el('button','railbtn'); rb.textContent = 'View Learner Record';
-    rb.addEventListener('click', () => { location.hash = `#/${track.id}/cert`; });
+    rb.addEventListener('click', () => { location.hash = '#/course/cert'; });
     foot.appendChild(rb);
     rail.appendChild(foot);
 
@@ -454,30 +504,29 @@ const App = (() => {
     const c = el('div','homewrap'); host.appendChild(c);
     const prof = Store.profile();
 
-    /* ---- hero ---- */
     const hero = el('div','hero');
     hero.appendChild(el('div','eyebrow','Self-paced programme'));
-    hero.appendChild(el('h1', null, esc(COURSE.title)));
-    hero.appendChild(el('p','sub', esc(COURSE.subtitle)));
+    hero.appendChild(el('h1', null, 'Cross-Cultural Collaboration'));
+    hero.appendChild(el('p','sub', 'Working well across the four the organisation centres — no one of them is the standard the others are measured against.'));
     c.appendChild(hero);
 
-    /* ---- high-level overview ---- */
+    /* ---- overview ---- */
     const ov = el('div','panel overview');
     ov.appendChild(el('span','eyebrow ovlabel','About this programme'));
     const grid = el('div','ovgrid');
     [
       ['What it is',
-       'A self-paced course on working well across cultures in a revenue-cycle delivery setting. It covers the same ground as the facilitated workshop, restructured so you can work through it alone, at your own pace, and come back to it.'],
+       'A self-paced course on working well across the four delivery centres — the United States, the Philippines, India and Sri Lanka. It covers the same ground as the facilitated workshop, restructured so you can work through it alone and return to it.'],
       ['Why it exists',
-       'Most cross-cultural friction at work is not a performance problem. It is two groups running different but internally coherent assumptions about how to disagree, how to escalate, how to recognise good work, and what silence means. This builds the translation layer between them.'],
-      ['How it works',
-       'Tell us where you are based and which teams you work with, and the programme points you at the track that covers your counterparts. Neither direction is the default — a leader in Colombo taking on a US account needs this as much as one in Chicago taking on a Manila account.'],
+       'Most cross-cultural friction is not a performance problem. It is two groups running different but internally coherent assumptions about how to disagree, how to escalate, how to recognise good work and what silence means. This builds the translation layer between them.'],
+      ['It is built around you',
+       'Tell us where you are based and who you work with, and the course is assembled for that pairing. Your own culture is one column among four, never the reference point. Two colleagues in different centres get equally long, equally detailed courses.'],
+      ['The content actually changes',
+       'Comparisons are drawn against your culture. Examples and people come from the centres you selected. Whole concepts appear or disappear — if you and your counterparts are both indirect, you get a module on telling two indirect styles apart instead of one about translating directness.'],
       ['What you will do',
-       'Short readings interleaved with drag-and-drop sorting, matching, sequencing, flip cards, and branching simulations where you choose a response and see what it signals. Every exercise ends with the coaching point behind it.'],
+       'Short readings interleaved with drag-and-drop sorting, matching, sequencing, flip cards and branching simulations where you choose a response and see what it signals. Every exercise ends with the coaching point behind it.'],
       ['What you get',
-       'A short check after each module, one graded knowledge check, a downloadable certificate, and a PDF compiling every reflection you write.'],
-      ['Your progress',
-       'Everything saves automatically in this browser as you work — including part-finished exercises. Nothing is sent anywhere, and you can stop and resume at any point.']
+       'A check after each module, one graded knowledge check, a downloadable certificate, and a PDF compiling every reflection you write. Progress saves automatically in this browser.']
     ].forEach(([t,d]) => {
       const cell = el('div','ovcell');
       cell.appendChild(el('b', null, t));
@@ -485,125 +534,96 @@ const App = (() => {
       grid.appendChild(cell);
     });
     ov.appendChild(grid);
-
-    const mods = COURSE.tracks.reduce((a,t) => a + t.modules.length, 0);
-    const mins = COURSE.tracks.reduce((a,t) => a + t.modules.reduce((x,m)=>x+(m.minutes||0),0), 0);
-    const st = el('div','ovstats');
-    [[String(COURSE.tracks.length),'Tracks'], [String(mods),'Modules'],
-     [Math.round(mins/60*10)/10 + ' hrs','If you take both'],
-     ['4','Cultures covered']].forEach(([v,l]) => {
-      const b = el('div','ovstat');
-      b.appendChild(el('b', null, v));
-      b.appendChild(el('span', null, l));
-      st.appendChild(b);
-    });
-    ov.appendChild(st);
     c.appendChild(ov);
 
-    /* ---- learner context ---- */
+    /* ---- context ---- */
     const pf = el('div','panel profilecard');
     pf.appendChild(el('span','eyebrow ovlabel','Set your context'));
-    pf.appendChild(el('p','pfintro',
-      'This only decides what we recommend. You can take either track, or both, whatever you choose here.'));
+    pf.appendChild(el('p','pfintro','This assembles your course. Change it any time — your progress on shared modules is kept.'));
 
     const f1 = el('div','field');
     f1.appendChild(el('label','flabel','Your name — for your certificate'));
     const inp = el('input'); inp.type='text'; inp.id='learnername';
-    inp.placeholder = 'e.g. Alex Morgan'; inp.value = Store.name();
+    inp.placeholder='e.g. Maria Santos'; inp.value = Store.name();
     inp.addEventListener('input', () => { Store.setName(inp.value); syncHeader(); });
     f1.appendChild(inp); pf.appendChild(f1);
 
     const f2 = el('div','field');
     f2.appendChild(el('label','flabel','Where are you based?'));
-    const sel = el('select');
-    sel.appendChild(new Option('Select a location…',''));
-    COURSE.places.forEach(pl => {
-      const o = new Option(pl.name, pl.id);
-      if(prof.base === pl.id) o.selected = true;
-      sel.appendChild(o);
-    });
-    sel.addEventListener('change', () => {
-      const p2 = Store.profile(); p2.base = sel.value; Store.setProfile(p2); paintRec();
-    });
-    f2.appendChild(sel); pf.appendChild(f2);
-
-    const f3 = el('div','field');
-    f3.appendChild(el('label','flabel','Which teams do you work with most closely?'));
-    f3.appendChild(el('span','fhint','Choose as many as apply.'));
-    const chips = el('div','chipset');
-    COURSE.places.filter(pl => pl.id !== 'other').forEach(pl => {
-      const b = el('button', 'pchip' + (prof.works.includes(pl.id) ? ' on' : ''));
-      b.type = 'button'; b.textContent = pl.name;
+    f2.appendChild(el('span','fhint','This becomes your own column in every comparison.'));
+    const baseSet = el('div','chipset');
+    CultureUtil.list().forEach(cu => {
+      const b = el('button','pchip' + (prof.base === cu.id ? ' on' : ''));
+      b.type='button'; b.textContent = `${cu.flag} ${cu.name}`;
       b.addEventListener('click', () => {
         const p2 = Store.profile();
-        p2.works = p2.works.includes(pl.id) ? p2.works.filter(x => x !== pl.id)
-                                            : [...p2.works, pl.id];
+        p2.base = (p2.base === cu.id) ? '' : cu.id;
+        p2.works = (p2.works||[]).filter(x => x !== p2.base);
         Store.setProfile(p2);
-        b.classList.toggle('on', p2.works.includes(pl.id));
-        paintRec();
+        renderHome();
       });
-      chips.appendChild(b);
+      baseSet.appendChild(b);
     });
-    f3.appendChild(chips); pf.appendChild(f3);
+    f2.appendChild(baseSet); pf.appendChild(f2);
+
+    const f3 = el('div','field');
+    f3.appendChild(el('label','flabel','Which centres do you work with?'));
+    f3.appendChild(el('span','fhint','Choose as many as apply. Each one adds a culture pack of equal depth.'));
+    const workSet = el('div','chipset');
+    CultureUtil.list().forEach(cu => {
+      const isSelf = prof.base === cu.id;
+      const b = el('button','pchip' + (prof.works.includes(cu.id) ? ' on' : '') + (isSelf ? ' self' : ''));
+      b.type='button';
+      b.textContent = `${cu.flag} ${cu.name}` + (isSelf ? ' — where you are' : '');
+      b.disabled = isSelf;
+      b.addEventListener('click', () => {
+        const p2 = Store.profile();
+        p2.works = p2.works.includes(cu.id) ? p2.works.filter(x => x !== cu.id) : [...p2.works, cu.id];
+        Store.setProfile(p2);
+        renderHome();
+      });
+      workSet.appendChild(b);
+    });
+    f3.appendChild(workSet); pf.appendChild(f3);
     c.appendChild(pf);
 
-    /* ---- recommended path ---- */
-    const recLabel = el('div','seclabel','Your path');
-    const grid2 = el('div','trackgrid');
-    c.appendChild(recLabel); c.appendChild(grid2);
+    /* ---- assembled course ---- */
+    const built = activeCourse();
+    c.appendChild(el('div','seclabel', built ? 'Your course' : 'Your course appears here'));
 
-    function recommended(){
-      const w = Store.profile().works;
-      const ids = new Set();
-      COURSE.places.forEach(pl => { if(w.includes(pl.id) && pl.track) ids.add(pl.track); });
-      return ids;
+    if(!built){
+      const need = el('div','panel emptystate');
+      need.appendChild(el('p', null, !prof.base
+        ? 'Choose where you are based, then which centres you work with.'
+        : 'Now choose at least one centre you work with.'));
+      c.appendChild(need);
+      screen('home');
+      return;
     }
-    function paintRec(){
-      const rec = recommended();
-      const b = Store.profile().base;
-      const basePlace = COURSE.places.find(x => x.id === b);
-      const w = Store.profile().works;
-      recLabel.textContent = '';
-      recLabel.appendChild(document.createTextNode(rec.size ? 'Recommended for you' : 'Choose your track'));
 
-      const line = c.querySelector('.recline');
-      if(line) line.remove();
-      if(basePlace || w.length){
-        const names = w.map(id => (COURSE.places.find(x=>x.id===id)||{}).name).filter(Boolean);
-        const txt = el('p','recline');
-        txt.textContent = (basePlace ? `Based in ${basePlace.name}` : 'Location not set')
-          + (names.length ? ` · working with ${names.join(', ')}` : ' · no teams selected yet');
-        recLabel.after(txt);
-      }
-
-      const ordered = [...COURSE.tracks].sort((x,y) =>
-        (rec.has(y.id) ? 1 : 0) - (rec.has(x.id) ? 1 : 0));
-      grid2.textContent = '';
-      ordered.forEach(t => grid2.appendChild(trackCard(t, rec.has(t.id))));
-    }
-    paintRec();
-    screen('home');
-  }
-
-  function trackCard(t, isRec){
-    const p = trackProgress(t);
-    const card = el('button', 'trackcard' + (isRec ? ' rec' : ''));
-    if(isRec) card.appendChild(el('span','recbadge','Recommended for you'));
-    card.appendChild(el('div','tk', esc(t.audience)));
-    card.appendChild(el('h3', null, esc(t.name)));
-    card.appendChild(el('p', null, esc(t.subtitle)));
+    const p = trackProgress(built);
+    const card = el('button','trackcard rec coursecard');
+    card.appendChild(el('div','tk', built.audience));
+    card.appendChild(el('h3', null, built.name));
+    card.appendChild(el('p', null, built.subtitle));
     const meta = el('div','meta');
-    const mins = t.modules.reduce((s,m) => s + (m.minutes||0), 0);
-    meta.appendChild(el('span', null, `${t.modules.length} modules`));
+    const mins = built.modules.reduce((a,m)=>a+(m.minutes||0),0);
+    meta.appendChild(el('span', null, `${built.modules.length} modules`));
     meta.appendChild(el('span', null, `~${mins} min`));
-    meta.appendChild(el('span', null, `${t.knowledgeCheck.length}-question check`));
+    meta.appendChild(el('span', null, `${built.them.length} culture pack${built.them.length>1?'s':''}`));
+    meta.appendChild(el('span', null, `${built.knowledgeCheck.length}-question check`));
     card.appendChild(meta);
     const pr = el('div','tprog'); pr.appendChild(el('i'));
-    pr.firstChild.style.width = p.pct + '%';
-    card.appendChild(pr);
-    card.appendChild(el('div','go', p.pct > 0 ? `Continue — ${p.pct}% complete →` : 'Start this track →'));
-    card.addEventListener('click', () => { location.hash = `#/${t.id}`; });
-    return card;
+    pr.firstChild.style.width = p.pct + '%'; card.appendChild(pr);
+    card.appendChild(el('div','go', p.pct > 0 ? `Continue — ${p.pct}% complete →` : 'Start the course →'));
+    card.addEventListener('click', () => { location.hash = '#/course'; });
+    c.appendChild(card);
+
+    const fair = el('p','fairnote');
+    fair.textContent = `Every learner gets the same shape: ${built.modules.length} modules and ${mins} minutes, whichever centre they are based in. Only the content differs.`;
+    c.appendChild(fair);
+
+    screen('home');
   }
 
   function renderTrack(){
@@ -627,9 +647,9 @@ const App = (() => {
       });
     c.appendChild(stats);
 
-    const groups = [['pre','Before the session — foundations'],
-                    ['core','Core modules'],
-                    ['follow','After the session — putting it to work']];
+    const groups = [['pre','Foundations'],
+                    ['core','Core modules and culture packs'],
+                    ['follow','Putting it to work']];
     groups.forEach(([stage, label]) => {
       const mods = track.modules.filter(m => (m.stage || 'core') === stage);
       if(!mods.length) return;
@@ -645,7 +665,7 @@ const App = (() => {
         t.appendChild(el('span', null, esc(m.tagline)));
         card.appendChild(t);
         card.appendChild(el('div','mm', `${m.minutes} min`));
-        card.addEventListener('click', () => { location.hash = `#/${track.id}/${m.id}`; });
+        card.addEventListener('click', () => { location.hash = `#/course/${m.id}`; });
         list.appendChild(card);
       });
       c.appendChild(list);
@@ -661,7 +681,7 @@ const App = (() => {
     kt.appendChild(el('span', null, `${track.knowledgeCheck.length} graded questions · ${track.passMark}% to pass`));
     kc.appendChild(kt);
     kc.appendChild(el('div','mm', q && q.submitted ? q.pct + '%' : '—'));
-    kc.addEventListener('click', () => { location.hash = `#/${track.id}/check`; });
+    kc.addEventListener('click', () => { location.hash = '#/course/check'; });
     list.appendChild(kc);
 
     const cc = el('button','mcard');
@@ -670,14 +690,14 @@ const App = (() => {
     ct.appendChild(el('b', null, 'Certificate & export'));
     ct.appendChild(el('span', null, 'Download your certificate and a PDF of your answers'));
     cc.appendChild(ct);
-    cc.addEventListener('click', () => { location.hash = `#/${track.id}/cert`; });
+    cc.addEventListener('click', () => { location.hash = '#/course/cert'; });
     list.appendChild(cc);
     c.appendChild(list);
 
     const reset = el('div'); reset.style.marginTop = '2.5rem'; reset.style.textAlign = 'center';
-    const rb = el('button','btn ghost sm'); rb.textContent = 'Reset my progress on this track';
+    const rb = el('button','btn ghost sm'); rb.textContent = 'Reset my progress';
     rb.addEventListener('click', () => {
-      if(confirm(`Reset all progress, answers and reflections for "${track.name}"? This cannot be undone.`)){
+      if(confirm('Reset all progress, answers and reflections for this course? This cannot be undone.')){
         Store.resetTrack(track.id); toast('Progress reset'); renderTrack(); refreshChrome();
       }
     });
@@ -687,7 +707,7 @@ const App = (() => {
 
   function renderModule(mid){
     const i = track.modules.findIndex(m => m.id === mid);
-    if(i < 0){ location.hash = `#/${track.id}`; return; }
+    if(i < 0){ location.hash = '#/course'; return; }
     const m = track.modules[i];
     const c = $('#module'); c.textContent = '';
 
@@ -720,19 +740,19 @@ const App = (() => {
 
     const nav = el('div','mnav');
     const back = el('button','btn ghost'); back.textContent = '← All modules';
-    back.addEventListener('click', () => { location.hash = `#/${track.id}`; });
+    back.addEventListener('click', () => { location.hash = '#/course'; });
     nav.appendChild(back);
     nav.appendChild(el('div','sp'));
     if(i > 0){
       const pv = el('button','btn ghost'); pv.textContent = 'Previous';
-      pv.addEventListener('click', () => { location.hash = `#/${track.id}/${track.modules[i-1].id}`; });
+      pv.addEventListener('click', () => { location.hash = `#/course/${track.modules[i-1].id}`; });
       nav.appendChild(pv);
     }
     const nx = el('button','btn');
     nx.textContent = i < track.modules.length - 1 ? 'Next module →' : 'Knowledge check →';
     nx.addEventListener('click', () => {
       location.hash = i < track.modules.length - 1
-        ? `#/${track.id}/${track.modules[i+1].id}` : `#/${track.id}/check`;
+        ? `#/course/${track.modules[i+1].id}` : '#/course/check';
     });
     nav.appendChild(nx);
     c.appendChild(nav);
@@ -817,7 +837,7 @@ const App = (() => {
 
     const nav = el('div','mnav');
     const back = el('button','btn ghost'); back.textContent = '← All modules';
-    back.addEventListener('click', () => { location.hash = `#/${track.id}`; });
+    back.addEventListener('click', () => { location.hash = '#/course'; });
     nav.appendChild(back);
     c.appendChild(nav);
     screen('check');
@@ -870,11 +890,11 @@ const App = (() => {
     row.appendChild(again);
     if(pass){
       const cert = el('button','btn'); cert.textContent = 'Go to my certificate →';
-      cert.addEventListener('click', () => { location.hash = `#/${track.id}/cert`; });
+      cert.addEventListener('click', () => { location.hash = '#/course/cert'; });
       row.appendChild(cert);
     }
     const back = el('button','btn ghost'); back.textContent = 'All modules';
-    back.addEventListener('click', () => { location.hash = `#/${track.id}`; });
+    back.addEventListener('click', () => { location.hash = '#/course'; });
     row.appendChild(back);
     wrap.appendChild(row);
     return wrap;
@@ -937,7 +957,7 @@ const App = (() => {
     pdf.addEventListener('click', () => Certificate.answersPDF(track, toast));
     row2.appendChild(pdf);
     const back = el('button','btn ghost'); back.textContent = 'All modules';
-    back.addEventListener('click', () => { location.hash = `#/${track.id}`; });
+    back.addEventListener('click', () => { location.hash = '#/course'; });
     row2.appendChild(back);
     c.appendChild(row2);
     screen('cert');
@@ -948,15 +968,18 @@ const App = (() => {
     const h = (location.hash || '#/').replace(/^#\/?/, '');
     const parts = h.split('/').filter(Boolean);
 
-    if(!parts.length){
+    if(!parts.length || parts[0] !== 'course'){
       track = null; currentMid = null;
-      document.body.removeAttribute('data-track');
+      document.body.removeAttribute('data-culture');
       $('#pbar').style.width = '0%';
       syncHeader();
       renderHome(); return;
     }
-    track = trackById(parts[0]);
-    document.body.dataset.track = track.id;
+
+    const built = activeCourse();
+    if(!built){ location.hash = '#/'; return; }
+    track = built;
+    document.body.dataset.culture = built.you.id;
     Activities.setTrack(track.id);
     Store.bind(track.id);
     currentMid = parts[1] || null;

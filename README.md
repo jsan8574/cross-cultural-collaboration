@@ -9,64 +9,74 @@ coaching language and RCM consequences behind every "Coaching Key Points" callou
 
 ---
 
-## The two tracks
+## No culture is the baseline
 
-**Tracks are named for the teams you work *with*, never for who you are.** A leader in
-Manila taking on a US account and a leader in Chicago taking on a Manila account are both
-catered for, and neither is treated as the default learner. No nationality is the
-assumed audience.
+The four the organisation delivery centres — **United States, Philippines, India,
+Sri Lanka** — are modelled as peers in `js/cultures.js`. Every one carries the same
+fields at the same depth: dimension scores, communication signals, feedback norms,
+hierarchy, a teamwork concept, working calendar, internal diversity, **two composite
+people**, RCM patterns, how it gets misread, and what it brings.
 
-| Track | id | Covers | Modules | Knowledge check |
+There is no "default" culture and no "other" cultures. The learner's own centre is
+simply whichever one they selected, and it becomes the left-hand column in every
+comparison — including its own "how you are misread" and "what you bring" sections.
+
+`work` also records the real operating model: **US, PH and India are fully remote;
+Sri Lanka is hybrid.** That is a structural asymmetry rather than a cultural one, and it
+appears as its own conditional content in the protocols and meetings modules.
+
+### The course is generated, not selected
+
+The learner sets two things — where they are based, and which centres they work with —
+and `Build.buildCourse(you, them)` assembles:
+
+- **10 core modules** where every comparison is drawn against the learner's own culture
+- **one culture pack per collaborator**, identical in shape for all four
+
+Every learner gets the same amount of course. Verified by audit across all pairings:
+
+| Learner based in | Collaborators | Modules | Activities | Minutes |
 |---|---|---|---|---|
-| **Working with PH, India & Sri Lanka Teams** | `ph-in-lk` | Communication, hierarchy and trust across the three cultures | 12 | 15 questions |
-| **Working with United States Teams** | `us` | US working norms, and where deadline urgency originates | 6 | 12 questions |
+| US | PH, India, Sri Lanka | 13 | 20 | 164 |
+| Philippines | US, India, Sri Lanka | 13 | 20 | 164 |
+| India | US, PH, Sri Lanka | 13 | 20 | 164 |
+| Sri Lanka | US, PH, India | 13 | 20 | 164 |
 
-The second track covers low-context norms, individualism and what it means for feedback
-and recognition, speed-as-competence, and how US client expectations flow downstream
-(payer timely-filing windows, compliance deadlines, revenue targets) so a delivery team
-can see where a "Friday" deadline actually originates.
+Identical structure, different content. That symmetry is the anti-bias guarantee, and
+`/tmp/audit.js`-style checking should be re-run whenever content changes.
 
-Tracks are independent: separate progress, separate scores, separate certificates.
+### Concepts change by pairing, not just examples
 
-### Onboarding decides what is *recommended*, never what is *allowed*
+`CultureUtil.pairKind(a, b)` classifies each relationship and the content follows:
 
-The home screen asks two things: where the learner is based, and which teams they work
-with most closely. Each selected place maps to the track that covers it
-(`COURSE.places` in `js/track-us-norms.js`), so the recommendation is purely "you work
-with X, therefore take the module about X." Selecting both directions recommends both.
-Every track stays clickable regardless of what is selected, and the learner can skip the
-questions entirely.
-
-Worked examples:
-
-| Based in | Works with | Recommended |
+| Pairing | Kind | What the learner gets |
 |---|---|---|
-| India | United States | Working with United States Teams |
-| United States | Philippines, Sri Lanka | Working with PH, India & Sri Lanka Teams |
-| Sri Lanka | India, United States | **Both** |
-| Philippines | India | Working with PH, India & Sri Lanka Teams |
+| US ↔ PH / India / Sri Lanka | `cross` | The low/high-context translation, plus a "your specific risk" callout written for whichever side the learner is on |
+| PH ↔ India, PH ↔ Sri Lanka, India ↔ Sri Lanka | `high-high` | **No** low/high-context material at all. Instead: a matrix contrasting two *different* indirect styles, and a warning that shared indirectness makes the pairing feel easier than it is |
 
-The last row is the case worth noting: no US involvement at all, and the programme still
-works — which is the point of framing tracks by counterpart rather than by nationality.
+Worked example — a Philippines learner:
 
-### Language rule applied to the content
+- **→ India only:** no low/high-context comparison; gets the "two indirect styles" matrix
+- **→ US only:** gets the comparison; no matrix
+- **→ both:** gets both sections
 
-Inside the tracks, "US" is kept **only where it denotes the client organisation** — these
-teams service US healthcare providers, so "US payer", "US provider" and "the US team"
-(meaning the onshore client-facing team) are business facts. Every phrase that presumed
-the *learner* was American was removed: "US leaders" became "leaders", "US default style"
-became "Direct, low-context default", "offshore teams" became "these teams" or "the
-delivery team". The word "offshore" no longer appears anywhere in the content.
+The blind-spots module also swaps entirely: a low-context learner gets the six biases
+their directness generates; a high-context learner gets a different six, including
+"assuming the signal was received" and "protecting them from bad news".
 
----
+### Language rule
+
+"US" appears only where it denotes the **client organisation** — these centres service US
+healthcare providers, so "US payer", "US provider" and timely-filing windows are business
+facts. Nothing presumes the learner's nationality. The word "offshore" does not appear.
 
 ## Structure
 
 ```
 index.html              shell + routing targets (cache-bust ?v=N lives here)
-css/styles.css          all styling; cool-only palette
-js/track-apac.js        TRACK_APAC — working with PH / India / Sri Lanka teams
-js/track-us-norms.js    TRACK_US + the COURSE registry and place list
+css/styles.css          all styling; cool-only palette; one accent for everyone
+js/cultures.js          the four centres as peers + CultureUtil pair logic
+js/build.js             buildCourse(you, them) -> core modules + culture packs
 js/store.js             localStorage persistence, learner profile, elapsed time
 js/activities.js        the six activity renderers
 js/certificate.js       canvas certificate (PNG) + jsPDF answers export
@@ -75,20 +85,16 @@ fonts/                  Proxima Nova 400/600/700 + matching italics
 .nojekyll               stops GitHub Pages running Jekyll over the folder
 ```
 
-### Adding a third track
+### Adding a fifth centre
 
-`COURSE.tracks` at the bottom of `js/track-us-norms.js` is the registry. Add a new file
-defining a track object with the same shape, load it in `index.html` before `app.js`,
-push it into `COURSE.tracks`, and add any new locations to `COURSE.places` with a `track`
-pointing at its id — the recommendation logic then picks it up with no further changes.
-Storage keys are namespaced `ccl.v2.<trackId>.*`, so a new track cannot collide with an
-existing learner's progress.
+Add an entry to `CULTURES` in `js/cultures.js` with every field the existing four carry —
+the audit will flag any that are short. Nothing in `js/build.js` is hard-coded to a
+country: modules, packs, comparisons and the dimension grid all iterate over whatever is
+in `CULTURES`. Storage is namespaced `ccl.v3.<learner culture>.*`.
 
-> **Storage note:** the namespace moved from `ccl.v1` to `ccl.v2` when the track ids
-> changed (the old `us` id meant a different track). Any progress saved before that is
-> orphaned rather than misread. Bump the namespace again if track ids ever change.
-
----
+> **Storage note:** the namespace moved v1 → v2 → v3 as the structure changed. Progress
+> saved under an older namespace is orphaned rather than misread. Bump it again if the
+> module id scheme ever changes.
 
 ## Fonts — what is actually in the files
 

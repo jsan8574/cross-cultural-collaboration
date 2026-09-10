@@ -2,7 +2,7 @@
    Storage is namespaced per track so adding a track never collides with an existing one. */
 
 const Store = (() => {
-  const NS = 'ccl.v2';
+  const NS = 'ccl.v3';
   const mem = {};                       // fallback when localStorage is unavailable
   let usingMem = false;
 

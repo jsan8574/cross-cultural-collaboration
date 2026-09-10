@@ -7,7 +7,7 @@ const Certificate = (() => {
   const PAL = { navy:'#0E2436', ink:'#33485C', slate:'#5C7185', line:'#E1E9F0',
                 pale:'#F2F6F9', teal:'#2E9CAB', tealD:'#17656F', mint:'#2E7D5B' };
 
-  function accent(track){ return track.accent === 'teal' ? PAL.tealD : PAL.teal; }
+  function accent(){ return PAL.teal; }   /* one accent — no culture is tinted differently */
 
   /* Proxima Nova is loaded via @font-face; canvas needs it resolved before drawing. */
   async function ready(){
@@ -29,7 +29,7 @@ const Certificate = (() => {
     canvas.style.aspectRatio = `${W} / ${H}`;
     const x = canvas.getContext('2d');
     x.scale(dpr, dpr);
-    const A = accent(o.track);
+    const A = accent();
 
     const paint = () => {
       // ground
@@ -89,7 +89,7 @@ const Certificate = (() => {
       x.fillText(o.track.subtitle, cx, 576);
 
       x.fillStyle = PAL.slate; x.font = F(400,18);
-      x.fillText(o.track.regions, cx, 612);
+      x.fillText(o.track.audience || '', cx, 612);
 
       // stat panel
       const bw = 1080, bx = (W - bw)/2, by = 660, bh = 168;
@@ -129,7 +129,7 @@ const Certificate = (() => {
       x.textAlign = 'right';
       x.fillStyle = PAL.slate; x.font = F(600,15);
       x.letterSpacing = '2px'; x.fillText('PROGRAMME', bx + bw, 946); x.letterSpacing = '0px';
-      x.fillStyle = PAL.navy; x.font = F(600,22); x.fillText(COURSE.title, bx + bw, 978);
+      x.fillStyle = PAL.navy; x.font = F(600,22); x.fillText('Cross-Cultural Collaboration', bx + bw, 978);
 
       x.textAlign = 'center';
       x.fillStyle = PAL.slate; x.font = F(400,15);
@@ -145,7 +145,7 @@ const Certificate = (() => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${slug(name)}-${slug(track.name)}-certificate.png`;
+      a.download = `${slug(name)}-cross-cultural-collaboration-certificate.png`;
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 4000);
     }, 'image/png');
@@ -217,7 +217,7 @@ const Certificate = (() => {
     let y = 0;
 
     const rgb = h => [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
-    const A = rgb(track.accent === 'teal' ? PAL.tealD : PAL.teal);
+    const A = rgb(PAL.teal);
     const NAVY = rgb(PAL.navy), SLATE = rgb(PAL.slate), INK = rgb(PAL.ink);
 
     function page(first){
@@ -235,7 +235,7 @@ const Certificate = (() => {
     doc.text('My Answers & Reflections', M, y); y += 26;
 
     doc.setFont('helvetica','normal'); doc.setFontSize(12); doc.setTextColor(...SLATE);
-    doc.text(track.name, M, y); y += 16;
+    doc.text(track.audience || track.name, M, y); y += 16;
     doc.text(`${name}  ·  ${new Date().toLocaleDateString()}`, M, y); y += 16;
     doc.text(`Time invested: ${Store.fmt(Store.elapsed(track.id))}` +
              (q && q.submitted ? `  ·  Knowledge check: ${q.pct}%` : ''), M, y); y += 22;
@@ -298,11 +298,11 @@ const Certificate = (() => {
     for(let i = 1; i <= n; i++){
       doc.setPage(i);
       doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(...SLATE);
-      doc.text(`${COURSE.title} — ${track.name}`, M, H - 28);
+      doc.text('Cross-Cultural Collaboration — ' + (track.audience || ''), M, H - 28);
       doc.text(`${i} / ${n}`, W - M, H - 28, { align:'right' });
     }
 
-    doc.save(`${slug(name)}-${slug(track.name)}-answers.pdf`);
+    doc.save(`${slug(name)}-cross-cultural-collaboration-answers.pdf`);
   }
 
   return { draw, download, answersPDF };
